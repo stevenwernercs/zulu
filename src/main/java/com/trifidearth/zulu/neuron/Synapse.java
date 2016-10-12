@@ -9,8 +9,6 @@ import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.message.potiential.ActionPotiential;
-import com.trifidearth.zulu.message.transmitter.Gaba;
-import com.trifidearth.zulu.message.transmitter.Glutamate;
 import com.trifidearth.zulu.message.transmitter.Transmitters;
 
 /**
@@ -34,7 +32,7 @@ public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> i
     @Override
     public Transmitters propagate(ActionPotiential input) {
         if(input!=null){
-            return new Transmitters(new Glutamate(), new Gaba());
+            return Transmitters.getRandomTransmitters();
         }
         return null;
     }

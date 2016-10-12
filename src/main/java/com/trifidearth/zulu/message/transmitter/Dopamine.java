@@ -11,4 +11,7 @@ package com.trifidearth.zulu.message.transmitter;
  */
 public class Dopamine extends Transmitter{
     
+    public Dopamine() {
+        super(-6D);
+    }
 }

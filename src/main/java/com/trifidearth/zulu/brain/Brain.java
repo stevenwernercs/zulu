@@ -147,7 +147,7 @@ public class Brain {
         log.info("Initial Brain State:\n"+brain.toString());
         int iteration = 0;
         while(true) {
-            Thread.sleep(100);
+            Thread.sleep(1000);
             brain.update();
             if(iteration % 5 == 0) {
                 brain.grow();

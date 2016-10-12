@@ -10,5 +10,9 @@ package com.trifidearth.zulu.message.transmitter;
  * @author iSteve
  */
 public class Acetlylcholine extends Transmitter{
+
+    public Acetlylcholine() {
+        super(8.4D);
+    }
     
 }

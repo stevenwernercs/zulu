@@ -11,4 +11,7 @@ package com.trifidearth.zulu.message.transmitter;
  */
 public class Serotonin extends Transmitter{
     
+    public Serotonin() {
+        super(3.1D);
+    }
 }

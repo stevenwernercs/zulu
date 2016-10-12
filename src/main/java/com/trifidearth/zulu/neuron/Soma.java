@@ -16,7 +16,7 @@ import com.trifidearth.zulu.message.potiential.ActionPotiential;
 public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential>{
 
     private static final double RESTING_POTIENTIAL = -70D;
-    private static final double THRESHOLD = -70D;
+    private static final double THRESHOLD = -65D;
     ElectricPotiential potiential = new ElectricPotiential(RESTING_POTIENTIAL);
     
     public Soma(CoordinatePair coordinatePair) {
