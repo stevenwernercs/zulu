@@ -1,0 +1,8 @@
+Tasks:
+	if a synapse is near transmitters for too long, grow (ie its own or another synapses output)
+	if a dendrite recieves its first transmitter, stop growing
+	tye sensor neurons to keystrokes [A-Y][a-y][0-9] for 60 sensor neurons
+		ensure keystrokes are read in and deciminated in real time
+			long press is rapid stimulation of the senors dentrite
+				allow for symultanious long presses possible
+	have motor neurons type output cooresponding to 
