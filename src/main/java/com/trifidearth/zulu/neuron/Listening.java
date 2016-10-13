@@ -9,7 +9,7 @@ package com.trifidearth.zulu.neuron;
  *
  * @author iSteve
  */
-interface listening {
+interface Listening {
     
     public void update();
 }

@@ -44,9 +44,9 @@ public class Brain {
         return bounds;
     }
     
-    public void update() {
+    public void start() {
         for(Neuron neuron : neurons){ 
-            neuron.update();
+            new Thread(neuron).start();
         }
     }
     
@@ -146,12 +146,10 @@ public class Brain {
         Brain brain = new Brain(bounds, 3, 1);
         log.info("Initial Brain State:\n"+brain.toString());
         int iteration = 0;
+        brain.start();
         while(true) {
-            Thread.sleep(1000);
-            brain.update();
-            if(iteration % 5 == 0) {
-                brain.grow();
-            }
+            Thread.sleep(5000);
+            brain.grow();
             log.info("Brain State " + iteration + ":\n"+brain.toString()+"\n"+brain.getPlot());
             iteration++;
         }

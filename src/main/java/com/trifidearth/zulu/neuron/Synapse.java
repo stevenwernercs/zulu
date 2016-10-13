@@ -15,7 +15,7 @@ import com.trifidearth.zulu.message.transmitter.Transmitters;
  *
  * @author iSteve
  */
-public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> implements grows {
+public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> implements Grows {
 
     public Synapse(Coordinate coordinate) {
         super(new CoordinatePair(coordinate));

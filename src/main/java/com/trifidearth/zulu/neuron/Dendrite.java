@@ -16,7 +16,7 @@ import com.trifidearth.zulu.message.transmitter.Transmitters;
  *
  * @author iSteve
  */
-public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential> implements grows{
+public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential> implements Grows{
     
     public Dendrite(Coordinate coordinate) {
         super(new CoordinatePair(coordinate));

@@ -18,13 +18,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.logging.Level;
 
 /**
  *
  * @author iSteve
  */
-public class Neuron extends Node implements listening, grows{
+public class Neuron extends Node implements Listening, Grows, Runnable{
 
     private static final Logger log = Logger.getLogger(Neuron.class);
     Brain brain;
@@ -67,6 +67,7 @@ public class Neuron extends Node implements listening, grows{
         axon.grow(brain.getBounds());
         synapses = new ArrayList<>();
         grow(bounds);
+        bringToLife();
     }
 
     @Override
@@ -113,6 +114,19 @@ public class Neuron extends Node implements listening, grows{
     @Override
     public String toString() {
         return "Neuron{" + "name=" + name + ", type=" + type + ", dentrites@" + dentrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
+    }
+
+    @Override
+    public void run() {
+        while(this.isAlive()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                log.warning("InterruptedException", ex);
+            }
+            log.info("Updating " + name);
+            update();
+        }
     }
     
 }

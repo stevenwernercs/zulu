@@ -14,6 +14,15 @@ import com.trifidearth.zulu.coordinate.Coordinate;
 public abstract class Node {
     
     private final Coordinate fixedPoint;
+    protected boolean isAlive = false;
+
+    public void kill() {
+        this.isAlive = false;
+    }
+    
+    public void bringToLife(){
+        this.isAlive = true;
+    }
 
     public Node(Coordinate fixedPoint) {
         this.fixedPoint = fixedPoint;
@@ -21,6 +30,10 @@ public abstract class Node {
 
     public Coordinate getfixedPoint() {
         return fixedPoint;
+    }
+    
+    public boolean isAlive() {
+        return isAlive;
     }
     
 }

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  *
  * @author iSteve
  */
-public class Axon extends CommunicationNode<ActionPotiential, ActionPotiential> implements grows{
+public class Axon extends CommunicationNode<ActionPotiential, ActionPotiential> implements Grows{
     
     double distance;
 

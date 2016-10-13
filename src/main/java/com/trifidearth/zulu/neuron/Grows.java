@@ -11,7 +11,7 @@ import com.trifidearth.zulu.coordinate.CoordinateBounds;
  *
  * @author iSteve
  */
-public interface grows {
+public interface Grows {
     
     public void grow(CoordinateBounds bounds);
 }
