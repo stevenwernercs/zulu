@@ -5,14 +5,20 @@
  */
 package com.trifidearth.zulu.message.transmitter;
 
+import com.sun.istack.internal.logging.Logger;
+
 /**
  *
  * @author iSteve
  */
 public class Acetlylcholine extends Transmitter{
 
+    private static final Logger log = Logger.getLogger(Acetlylcholine.class);
+    
     public Acetlylcholine() {
         super(8.4D);
+        this.lifespan +=10000L;
+        log.info("lifespan = "+ (lifespan-System.currentTimeMillis()));
     }
     
 }

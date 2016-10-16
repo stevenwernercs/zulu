@@ -12,12 +12,11 @@ import com.trifidearth.zulu.brain.Brain;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.message.potiential.ActionPotiential;
 import com.trifidearth.zulu.message.potiential.ElectricPotiential;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 /**
@@ -28,14 +27,14 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     private static final Logger log = Logger.getLogger(Neuron.class);
     Brain brain;
-    String name;
+    int name;
     NeuronType type;
-    Collection<Dendrite> dentrites;
+    ConcurrentLinkedQueue<Dendrite> dentrites;
     Soma soma;
     Axon axon;
-    Collection<Synapse> synapses;
+    ConcurrentLinkedQueue<Synapse> synapses;
 
-    public Neuron(Brain brain, String name, NeuronType type, Coordinate fixedPoint) {
+    public Neuron(Brain brain, int name, NeuronType type, Coordinate fixedPoint) {
         super(fixedPoint);
         this.brain = brain;
         this.name = name;
@@ -51,7 +50,9 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
         }
         ActionPotiential axonIn = soma.propagate(dentritalSum);
         if(axonIn != null){
-            log.info(name+" Fired");
+            if(NeuronType.MOTOR.equals(type)) {
+                brain.out.println(String.valueOf(Character.toChars(name)));
+            }
             ActionPotiential axonOut = axon.propagate(axonIn);
             for(Synapse each : synapses) {
                 brain.depositTranmitters(each.getGrowing(), each.propagate(axonOut));
@@ -61,11 +62,11 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     
     private void init(Coordinate coordinate, CoordinateBounds bounds){
         CoordinatePair point = new CoordinatePair(coordinate);
-        dentrites = new ArrayList<>();
+        dentrites = new ConcurrentLinkedQueue<>();
         soma = new Soma(point, new ElectricPotiential(0));
         axon = new Axon(point);
         axon.grow(brain.getBounds());
-        synapses = new ArrayList<>();
+        synapses = new ConcurrentLinkedQueue<>();
         grow(bounds);
         bringToLife();
     }
@@ -79,7 +80,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
             each.grow(bounds);
         }
         if(Math.random() < (1D/(synapses.size()+1D))) {
-            synapses.add(new Synapse(axon.getGrowing()));
+            synapses.add(new Synapse(axon.getGrowing(), this));
         }
         for(Synapse each : synapses) {
             each.grow(bounds);
@@ -88,6 +89,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     public Map<Coordinate,List<String>> getNodeLocationMap() {
         Map<Coordinate,List<String>> map = new HashMap();
+        Map map2 = new HashMap();
         appendAtLocation(map, soma.getfixedPoint(), name+"_N");
         appendAtLocation(map, axon.getGrowing(), name+"_A");
         for(Dendrite d : dentrites) {
@@ -120,11 +122,11 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     public void run() {
         while(this.isAlive()) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10);
             } catch (InterruptedException ex) {
                 log.warning("InterruptedException", ex);
             }
-            log.info("Updating " + name);
+            log.finest("Updating " + name);
             update();
         }
     }

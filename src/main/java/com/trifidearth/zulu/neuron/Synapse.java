@@ -17,16 +17,16 @@ import com.trifidearth.zulu.message.transmitter.Transmitters;
  */
 public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> implements Grows {
 
-    public Synapse(Coordinate coordinate) {
+    private double wander = 5D;
+    private Neuron neuron;
+    
+    public Synapse(Coordinate coordinate, Neuron neuron) {
         super(new CoordinatePair(coordinate));
+        this.neuron = neuron;
     }
     
     public Synapse(CoordinatePair coordinatePair) {
         super(coordinatePair);
-    }
-    
-    public void delay() {
-        
     }
 
     @Override
@@ -34,11 +34,27 @@ public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> i
         if(input!=null){
             return Transmitters.getRandomTransmitters();
         }
+        checkSurroundings();
         return null;
     }
 
     @Override
     public void grow(CoordinateBounds bounds) {
-        getCoordinatePair().growRandom(2, bounds);
+        if(wander > 0) {
+            getCoordinatePair().growRandom(Math.min(wander,1.5D), bounds);
+        }
+    }
+    
+    private void checkSurroundings(){
+        Transmitters nearby = neuron.brain.pollNearByTranmitters(this.getGrowing());
+        int deadNearby = nearby.countZeroPotientials();
+        int aliveNearby = nearby.countZeroPotientials();
+        if (deadNearby > 0) {
+            wander=5D;
+        } else if(aliveNearby==0) {
+            wander=Math.min(wander-1D, 0D);
+        } else {
+            wander-=1D;
+        }
     }
 }

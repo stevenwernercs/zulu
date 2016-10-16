@@ -13,5 +13,6 @@ public class Gaba extends Transmitter{
     
     public Gaba() {
         super(4D);
+        this.lifespan+=10500L;
     }
 }

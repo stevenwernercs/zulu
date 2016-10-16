@@ -11,12 +11,15 @@ import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.message.transmitter.Transmitters;
 import com.trifidearth.zulu.neuron.Neuron;
 import com.trifidearth.zulu.neuron.NeuronType;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  *
@@ -27,16 +30,20 @@ public class Brain {
     private static final Logger log = Logger.getLogger(Brain.class);
     Collection<Neuron> neurons;
     CoordinateBounds bounds;
-    TreeMap<Coordinate, Transmitters> ceribralFluid = new TreeMap<>();
+    private int transmitterCount;
+    private int deadTransmitterCount;
+    ConcurrentSkipListMap<Coordinate, Transmitters> ceribralFluid = new ConcurrentSkipListMap<>();
+    public PrintStream out;
     
-    public Brain(CoordinateBounds bounds, int inputs, int outputs) {
+    public Brain(CoordinateBounds bounds, int inputs, int outputs) throws UnsupportedEncodingException {
+        out = System.out;
         this.bounds = bounds;
         this.neurons = new ArrayList<>();
-        for(int i = 0; i < inputs; i++) {
-            this.neurons.add(new Neuron(this, "S"+i, NeuronType.SENSORY, new Coordinate(bounds)));
+        for(int i = 32; i < inputs+32; i++) {
+            this.neurons.add(new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds)));
         }
-        for(int i = 0; i < outputs; i++) {
-            this.neurons.add(new Neuron(this, "M"+i, NeuronType.MOTOR, new Coordinate(bounds)));
+        for(int i = 32; i < outputs+32; i++) {
+            this.neurons.add(new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds)));
         }
     }
 
@@ -56,6 +63,16 @@ public class Brain {
         }
     }
     
+    public Transmitters pollNearByTranmitters(Coordinate coordinate) {
+        Transmitters transmitters = ceribralFluid.get(coordinate);
+        if (transmitters == null){
+            transmitters = new Transmitters();
+        } else {
+            transmitters.update();  //remove old ones!
+        }
+        return transmitters;
+    }
+    
     /**
      * 
      * @param coordinate
@@ -66,17 +83,21 @@ public class Brain {
         if (transmitters == null){
             transmitters = new Transmitters();
         } else {
-            log.info(transmitters + " relayed!");
+            transmitters.update();  //remove old ones!
+        }
+        if(!transmitters.getTransmitters().isEmpty()) {
+            log.finest(transmitters + " relayed!");
+            out.print("t"+transmitters.getTransmitters().size()+">");
         }
         return transmitters;
     }
 
     public void depositTranmitters(Coordinate coordinate, Transmitters transmitters) {
-        if(ceribralFluid.containsKey(coordinate)){
-            ceribralFluid.get(coordinate).getTransmitters().addAll(transmitters.getTransmitters());
-        } else {
-            ceribralFluid.put(coordinate, transmitters);
+        Transmitters value;
+        if((value = ceribralFluid.get(coordinate)) != null){
+            transmitters.getTransmitters().addAll(value.getTransmitters());
         }
+        ceribralFluid.put(coordinate, transmitters);
         
     }
     
@@ -140,17 +161,19 @@ public class Brain {
         return sb.toString();
     }
     
-    public static void main(String args []) throws InterruptedException{
+    public static void main(String args []) throws InterruptedException, UnsupportedEncodingException{
         Coordinate orgin = new Coordinate(0, 0, 0);
-        CoordinateBounds bounds = new CoordinateBounds(orgin, 5);
-        Brain brain = new Brain(bounds, 3, 1);
+        CoordinateBounds bounds = new CoordinateBounds(orgin, 4);
+        Brain brain = new Brain(bounds, 10, 10);
         log.info("Initial Brain State:\n"+brain.toString());
         int iteration = 0;
         brain.start();
         while(true) {
             Thread.sleep(5000);
             brain.grow();
-            log.info("Brain State " + iteration + ":\n"+brain.toString()+"\n"+brain.getPlot());
+            brain.getTransmitterCount();
+            log.info("Brain State " + iteration + ":\n"+brain.toString());
+            log.info(brain.getPlot());
             iteration++;
         }
     }
@@ -161,8 +184,9 @@ public class Brain {
         sb.append("Brain: ")
                 .append(neurons.size())
                 .append(" neurons, ")
-                .append( getTransmitterCount())
+                .append(transmitterCount)
                 .append(" transmitters, ")
+                .append("(").append(deadTransmitterCount).append(" dead), ")
                 .append(bounds.toString());
         for(Neuron neuron : neurons) {
             sb.append("\n\t").append(neuron.toString());
@@ -170,11 +194,14 @@ public class Brain {
         return sb.toString();
     }
 
-    private int getTransmitterCount() {
-        int ret = 0;
+    private void getTransmitterCount() {
+        int count = 0;
+        int dead = 0;
         for(Transmitters t : ceribralFluid.values()){
-            ret += t.getTransmitters().size();
+            count += t.getTransmitters().size();
+            dead += t.countZeroPotientials();
         }
-        return ret;
+        transmitterCount=count;
+        deadTransmitterCount = dead;
     }
 }

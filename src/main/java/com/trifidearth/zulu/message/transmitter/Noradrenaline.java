@@ -13,5 +13,6 @@ public class Noradrenaline extends Transmitter{
     
     public Noradrenaline() {
         super(-5.4D);
+        this.lifespan+=7000L;
     }
 }

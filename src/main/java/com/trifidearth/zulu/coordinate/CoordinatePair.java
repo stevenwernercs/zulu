@@ -54,7 +54,7 @@ public class CoordinatePair {
         growing = growPoint;
     }
     
-    public void growRandom(int growDistance, CoordinateBounds bounds) {
+    public void growRandom(double growDistance, CoordinateBounds bounds) {
         Coordinate growPoint;
         do {
             growPoint = calculate(fixed, 

@@ -13,6 +13,7 @@ public class Adrenaline extends Transmitter{
 
     public Adrenaline() {
         super(-5.4D);
+        this.lifespan +=9000L;
     }
     
 }

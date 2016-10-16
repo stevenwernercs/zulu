@@ -5,10 +5,11 @@
  */
 package com.trifidearth.zulu.message.transmitter;
 
+import com.sun.istack.internal.logging.Logger;
 import com.trifidearth.zulu.message.Message;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +19,10 @@ import java.util.stream.Collectors;
  */
 public class Transmitters extends Message {
 
-    private final List<Transmitter> transmitterList = new LinkedList<>();
-    private static List<Transmitter> avalibleTransmitters = new ArrayList<>(Arrays.asList(
+    private static final Logger log = Logger.getLogger(Transmitters.class);
+    
+    private final ConcurrentLinkedQueue<Transmitter> transmitterList = new ConcurrentLinkedQueue<>();
+    private static final List<Transmitter> AVALIBLE_TRANSMITTERS = new ArrayList<>(Arrays.asList(
         new Acetlylcholine(),
         new Adrenaline(),
         new Dopamine(),
@@ -32,8 +35,8 @@ public class Transmitters extends Message {
    
     public static Transmitters getRandomTransmitters() {
         Transmitters t = new Transmitters();
-        for (int i = (int)(Math.random() * 8); i > 0; i--){
-            t.getTransmitters().add(avalibleTransmitters.get((int)(Math.random()*avalibleTransmitters.size())));
+        for (int i = (int)(Math.random() * AVALIBLE_TRANSMITTERS.size()); i >= 0; i--){
+            t.getTransmitters().add(AVALIBLE_TRANSMITTERS.get((int)(Math.random()*AVALIBLE_TRANSMITTERS.size())));
         }
         return t;
     }
@@ -44,8 +47,14 @@ public class Transmitters extends Message {
         }
     }
 
-    public List<Transmitter> getTransmitters() {
+    public ConcurrentLinkedQueue<Transmitter> getTransmitters() {
         return transmitterList;
+    }
+    
+    public void update(){
+        for(Transmitter each : transmitterList){
+            each.checkDesolved();
+        }
     }
     
     public List<String> getTransmittersAsStrings() {
@@ -56,5 +65,25 @@ public class Transmitters extends Message {
     public String toString() {
         return "Transmitters{" + transmitterList.size() + '}';
     }
+
+    public int countNonZeroPotientials() {
+        int ret = 0;
+        for(Transmitter each : transmitterList){
+            if(each.potiential.getPotientialVoltage()!= 0D){
+                ret++;
+            }
+        }
+        return ret;
+    }
     
+    public int countZeroPotientials() {
+        int ret = 0;
+        for(Transmitter each : transmitterList){
+            if(each.potiential.getPotientialVoltage()== 0D){
+                log.info("lifespan = "+ (each.lifespan-System.currentTimeMillis()));
+                ret++;
+            }
+        }
+        return ret;
+    }    
 }

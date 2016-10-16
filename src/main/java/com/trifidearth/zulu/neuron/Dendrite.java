@@ -18,6 +18,8 @@ import com.trifidearth.zulu.message.transmitter.Transmitters;
  */
 public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential> implements Grows{
     
+    private double wander = 2D;
+    
     public Dendrite(Coordinate coordinate) {
         super(new CoordinatePair(coordinate));
     }
@@ -27,12 +29,28 @@ public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential
     }
 
     @Override
-    public ElectricPotiential propagate(Transmitters trasmitters) {
-        return new ElectricPotiential(trasmitters.getTransmitters().size());
+    public ElectricPotiential propagate(Transmitters transmitters) {
+        int recievedCount = transmitters.countNonZeroPotientials();
+        if(recievedCount > 0){
+            wander = Math.min(wander-recievedCount, 0);
+        } else {
+            wander += 1D;
+        }
+        
+        ElectricPotiential ep = new ElectricPotiential(0);
+        double sum = 0D;
+        for(Transmitter each : transmitters.getTransmitters()){
+            //ep.absorb(each.getElectricPotiential());
+            sum += each.getElectricPotiential().getPotientialVoltage();
+        }
+        ep.setPotientialVoltage(sum);
+        return ep;
     }
 
     @Override
     public void grow(CoordinateBounds bounds) {
-        getCoordinatePair().growRandom(2, bounds);
+        if(wander > 0) {
+            getCoordinatePair().growRandom(Math.min(wander, 2D), bounds);
+        }
     }
 }

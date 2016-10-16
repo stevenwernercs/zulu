@@ -13,5 +13,6 @@ public class Dopamine extends Transmitter{
     
     public Dopamine() {
         super(-6D);
+        this.lifespan+=12000L;
     }
 }

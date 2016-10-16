@@ -13,5 +13,6 @@ public class Serotonin extends Transmitter{
     
     public Serotonin() {
         super(3.1D);
+        this.lifespan+=8000L;
     }
 }

@@ -13,5 +13,6 @@ public class Endorphins extends Transmitter{
     
     public Endorphins() {
         super(9.5D);
+        this.lifespan+=8000L;
     }
 }
