@@ -41,7 +41,7 @@ public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> i
     @Override
     public void grow(CoordinateBounds bounds) {
         if(wander > 0) {
-            getCoordinatePair().growRandom(Math.min(wander,1.5D), bounds);
+            getCoordinatePair().growRandom(Math.min(wander,.1D), bounds);
         }
     }
     

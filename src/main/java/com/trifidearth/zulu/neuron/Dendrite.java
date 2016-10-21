@@ -50,7 +50,7 @@ public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential
     @Override
     public void grow(CoordinateBounds bounds) {
         if(wander > 0) {
-            getCoordinatePair().growRandom(Math.min(wander, 2D), bounds);
+            getCoordinatePair().growRandom(Math.min(wander, .15D), bounds);
         }
     }
 }

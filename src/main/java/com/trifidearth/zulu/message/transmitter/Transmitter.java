@@ -27,7 +27,7 @@ public abstract class Transmitter extends Message {
     public void checkDesolved() {
         long systemTime = System.currentTimeMillis();
         if(lifespan < systemTime) {
-            log.info("lifespan = "+ (this.lifespan-System.currentTimeMillis()));
+            log.finest("lifespan = "+ (this.lifespan-System.currentTimeMillis()));
             potiential.setPotientialVoltage(0D);
         }
     }

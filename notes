@@ -1,8 +1,10 @@
 Tasks:
 	done: if a synapse is near transmitters for too long, grow (ie its own or another synapses output)
 	done: if a dendrite recieves its first transmitter, stop growing
-	tye sensor neurons to keystrokes [A-Y][a-y][0-9] for 60 sensor neurons
+	bind sensor neurons dendrites to keystrokes [A-Y][a-y][0-9] for 60 sensor neurons
 		ensure keystrokes are read in and deciminated in real time
 			long press is rapid stimulation of the senors dentrite
-				allow for symultanious long presses possible
+				allow for symultanious long presses possible 
 	done: have motor neurons type output cooresponding to some character
+	grow new neurons near large pools of dead transmitters
+	grow should favor inital direction in all axies

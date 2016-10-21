@@ -163,8 +163,8 @@ public class Brain {
     
     public static void main(String args []) throws InterruptedException, UnsupportedEncodingException{
         Coordinate orgin = new Coordinate(0, 0, 0);
-        CoordinateBounds bounds = new CoordinateBounds(orgin, 4);
-        Brain brain = new Brain(bounds, 10, 10);
+        CoordinateBounds bounds = new CoordinateBounds(orgin, 1);
+        Brain brain = new Brain(bounds, 1, 1);
         log.info("Initial Brain State:\n"+brain.toString());
         int iteration = 0;
         brain.start();
