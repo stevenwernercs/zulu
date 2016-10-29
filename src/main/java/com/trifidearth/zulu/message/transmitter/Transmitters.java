@@ -5,13 +5,14 @@
  */
 package com.trifidearth.zulu.message.transmitter;
 
-import com.sun.istack.internal.logging.Logger;
+
 import com.trifidearth.zulu.message.Message;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.log4j.Logger;
 
 /**
  *

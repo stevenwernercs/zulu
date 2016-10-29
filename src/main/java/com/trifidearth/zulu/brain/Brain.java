@@ -5,7 +5,6 @@
  */
 package com.trifidearth.zulu.brain;
 
-import com.sun.istack.internal.logging.Logger;
 import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.message.transmitter.Transmitters;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -86,7 +86,7 @@ public class Brain {
             transmitters.update();  //remove old ones!
         }
         if(!transmitters.getTransmitters().isEmpty()) {
-            log.finest(transmitters + " relayed!");
+            log.trace(transmitters + " relayed!");
             out.print("t"+transmitters.getTransmitters().size()+">");
         }
         return transmitters;

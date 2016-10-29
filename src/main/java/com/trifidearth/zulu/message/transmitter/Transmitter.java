@@ -5,9 +5,9 @@
  */
 package com.trifidearth.zulu.message.transmitter;
 
-import com.sun.istack.internal.logging.Logger;
 import com.trifidearth.zulu.message.Message;
 import com.trifidearth.zulu.message.potiential.ElectricPotiential;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -27,7 +27,7 @@ public abstract class Transmitter extends Message {
     public void checkDesolved() {
         long systemTime = System.currentTimeMillis();
         if(lifespan < systemTime) {
-            log.finest("lifespan = "+ (this.lifespan-System.currentTimeMillis()));
+            log.trace("lifespan = "+ (this.lifespan-System.currentTimeMillis()));
             potiential.setPotientialVoltage(0D);
         }
     }

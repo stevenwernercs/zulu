@@ -5,7 +5,6 @@
  */
 package com.trifidearth.zulu.neuron;
 
-import com.sun.istack.internal.logging.Logger;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.brain.Brain;
@@ -17,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -123,9 +123,9 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
             try {
                 Thread.sleep(10);
             } catch (InterruptedException ex) {
-                log.warning("InterruptedException", ex);
+                log.warn("InterruptedException", ex);
             }
-            log.finest("Updating " + name);
+            log.trace("Updating " + name);
             update();
         }
     }

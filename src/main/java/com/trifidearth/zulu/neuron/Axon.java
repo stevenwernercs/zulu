@@ -5,10 +5,10 @@
  */
 package com.trifidearth.zulu.neuron;
 
-import com.sun.istack.internal.logging.Logger;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.message.potiential.ActionPotiential;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -39,7 +39,7 @@ public class Axon extends CommunicationNode<ActionPotiential, ActionPotiential> 
         try {
             Thread.sleep((int)(distance*100));
         } catch (InterruptedException ex) {
-            log.severe("Interrupted my sleep", ex);
+            log.error("Interrupted my sleep", ex);
         }
     }
 
