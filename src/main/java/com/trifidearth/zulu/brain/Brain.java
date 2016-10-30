@@ -53,7 +53,9 @@ public class Brain {
     
     public void start() {
         for(Neuron neuron : neurons){ 
-            new Thread(neuron).start();
+            Thread t = new Thread(neuron);
+            t.setDaemon(true);
+            t.start();
         }
     }
     
