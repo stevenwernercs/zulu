@@ -128,10 +128,10 @@ public class Brain {
         return nodes;
     }
     
-    private StringBuilder repeatChar(char c, int n){
+    private StringBuilder repeatString(String s, int n){
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < n; i++){
-            sb.append(c);
+            sb.append(s);
         }
         return sb;
     }
@@ -144,11 +144,11 @@ public class Brain {
         if(newLinesNeeded==0) {
             xprev = prev.getX();
         } else {
-            sb.append(repeatChar('\n', newLinesNeeded));
+            sb.append(repeatString(System.lineSeparator(), newLinesNeeded));
             //restart new line reset column indicator
             xprev = bounds.getRadius() * -1;
         }
-        sb.append(repeatChar('\t', next.getX()-xprev));
+        sb.append(repeatString("\t", next.getX()-xprev));
         return sb;
     }
     
@@ -165,19 +165,19 @@ public class Brain {
     
     public static void main(String args []) throws InterruptedException, UnsupportedEncodingException{
         Coordinate orgin = new Coordinate(0, 0, 0);
-        CoordinateBounds bounds = new CoordinateBounds(orgin, 1);
-        Brain brain = new Brain(bounds, 1, 1);
-        log.info("Initial Brain State:\n"+brain.toString());
+        CoordinateBounds bounds = new CoordinateBounds(orgin, 250);
+        Brain brain = new Brain(bounds, 10000, 10000);
+        log.info("Initial Brain State:"+System.lineSeparator()+brain.toString());
         int iteration = 0;
         brain.start();
-        while(true) {
-            Thread.sleep(5000);
-            brain.grow();
-            brain.getTransmitterCount();
-            log.info("Brain State " + iteration + ":\n"+brain.toString());
-            log.info(brain.getPlot());
-            iteration++;
-        }
+            while(true) {
+                Thread.sleep(5000);
+                brain.grow();
+                brain.getTransmitterCount();
+                log.info("Brain State " + iteration + System.lineSeparator() + brain.toString());
+                log.info(brain.getPlot());
+                iteration++;
+            }
     }
 
     @Override
@@ -191,7 +191,7 @@ public class Brain {
                 .append("(").append(deadTransmitterCount).append(" dead), ")
                 .append(bounds.toString());
         for(Neuron neuron : neurons) {
-            sb.append("\n\t").append(neuron.toString());
+            sb.append(System.lineSeparator()).append("\t").append(neuron.toString());
         }
         return sb.toString();
     }
