@@ -5,8 +5,6 @@
  */
 package render;
 
-import org.lwjgl.LWJGLException;
-
 /**
  *
  * @author swerner
@@ -14,15 +12,9 @@ import org.lwjgl.LWJGLException;
 public class EngineTest {
     
     
-    public static void main(String [] args) throws LWJGLException, InterruptedException {
+    public static void main(String [] args) {
      
-        Render render = new Render();
-        render.createDisplay("I love the baes", 500, 500);
-        
-        while(!render.isCloseRequested()) {
-            Thread.sleep(500L);
-            render.updateDisplay();
-        }
+        new Render().run();
         
     }
     
