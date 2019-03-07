@@ -12,7 +12,6 @@ package com.trifidearth.zulu.message.transmitter;
 public class Dopamine extends Transmitter{
     
     public Dopamine() {
-        super(-6D);
-        this.lifespan+=12000L;
+        super("Dopamine", -6D, 12, 60);
     }
 }

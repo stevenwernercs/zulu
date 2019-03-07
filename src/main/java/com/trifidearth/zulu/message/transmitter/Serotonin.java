@@ -12,7 +12,6 @@ package com.trifidearth.zulu.message.transmitter;
 public class Serotonin extends Transmitter{
     
     public Serotonin() {
-        super(3.1D);
-        this.lifespan+=8000L;
+        super("Serotonin", 3.1D, 8, 60);
     }
 }

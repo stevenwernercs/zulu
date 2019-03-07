@@ -13,7 +13,7 @@ import com.trifidearth.zulu.message.potiential.ActionPotiential;
  *
  * @author iSteve
  */
-public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential>{
+public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential> {
 
     private static final double RESTING_POTIENTIAL = -70D;
     private static final double THRESHOLD = -55D;
@@ -30,8 +30,7 @@ public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential
         this.potiential = potiential;
     }
     
-    //buffer to collect and propagate action potientals
-    //Summation
+    //buffer to collect and propagate action potentials
     ActionPotiential summation() {
         ActionPotiential output = null;
         if(potiential.getPotientialVoltage() > THRESHOLD) {

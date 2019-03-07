@@ -51,10 +51,11 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
         if(axonIn != null){
             if(NeuronType.MOTOR.equals(type)) {
                 brain.out.println(String.valueOf(Character.toChars(name)));
-            }
-            ActionPotiential axonOut = axon.propagate(axonIn);
-            for(Synapse each : synapses) {
-                brain.depositTranmitters(each.getGrowing(), each.propagate(axonOut));
+            } else {
+                ActionPotiential axonOut = axon.propagate(axonIn);
+                for (Synapse each : synapses) {
+                    brain.depositTranmitters(each.getGrowing(), each.propagate(axonOut));
+                }
             }
         }
     }

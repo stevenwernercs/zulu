@@ -12,8 +12,7 @@ package com.trifidearth.zulu.message.transmitter;
 public class Adrenaline extends Transmitter{
 
     public Adrenaline() {
-        super(-5.4D);
-        this.lifespan +=9000L;
+        super("Adrenaline", -5.4D, 9, 60);
     }
     
 }

@@ -12,7 +12,6 @@ package com.trifidearth.zulu.message.transmitter;
 public class Gaba extends Transmitter{
     
     public Gaba() {
-        super(4D);
-        this.lifespan+=10500L;
+        super("Gaba", -4D, 10.5f, 60);
     }
 }

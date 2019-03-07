@@ -18,9 +18,7 @@ public class Acetlylcholine extends Transmitter{
     private static final Logger log = Logger.getLogger(Acetlylcholine.class);
     
     public Acetlylcholine() {
-        super(8.4D);
-        this.lifespan +=10000L;
-        log.info("lifespan = "+ (lifespan-System.currentTimeMillis()));
+        super("Acetlylcholine", 8.4D, 10, 60);
     }
     
 }

@@ -47,8 +47,8 @@ public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> i
     
     private void checkSurroundings(){
         Transmitters nearby = neuron.brain.pollNearByTransmitters(this.getGrowing());
-        int deadNearby = nearby.countZeroPotientials();
-        int aliveNearby = nearby.countZeroPotientials();
+        int deadNearby = nearby.countZeroPotentials();
+        int aliveNearby = nearby.countZeroPotentials();
         if (deadNearby > 0) {
             wander=5D;
         } else if(aliveNearby==0) {

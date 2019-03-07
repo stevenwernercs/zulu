@@ -35,15 +35,24 @@ public class Brain {
     ConcurrentSkipListMap<Coordinate, Transmitters> cerebralFluid = new ConcurrentSkipListMap<>();
     public PrintStream out;
     
-    public Brain(CoordinateBounds bounds, int inputs, int outputs) throws UnsupportedEncodingException {
+    public Brain(CoordinateBounds bounds, int inputs, int relay, int outputs) throws UnsupportedEncodingException {
         out = System.out;
         this.bounds = bounds;
         this.neurons = new ArrayList<>();
-        for(int i = Character.getNumericValue('a'); i < inputs+Character.getNumericValue('a'); i++) {
-            this.neurons.add(new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds)));
+        for (int i = 'a'; i < inputs + 'a'; i++) {
+            Neuron sensor = new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds));
+            log.trace("Created new Neuron: " + sensor);
+            this.neurons.add(sensor);
         }
-        for(int i = Character.getNumericValue('A'); i < outputs+Character.getNumericValue('A'); i++) {
-            this.neurons.add(new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds)));
+        for (int i = 0; i < relay; i++) {
+            Neuron inter = new Neuron(this, i, NeuronType.INTER_NEURON, new Coordinate(bounds));
+            log.trace("Created new Neuron: " + inter);
+            this.neurons.add(inter);
+        }
+        for (int i = 'A'; i < outputs + 'A'; i++) {
+            Neuron motor = new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds));
+            log.trace("Created new Neuron: " + motor);
+            this.neurons.add(motor);
         }
     }
 
@@ -165,8 +174,8 @@ public class Brain {
     
     public static void main(String args []) throws InterruptedException, UnsupportedEncodingException{
         Coordinate orgin = new Coordinate(0, 0, 0);
-        CoordinateBounds bounds = new CoordinateBounds(orgin, 250);
-        Brain brain = new Brain(bounds, 10000, 10000);
+        CoordinateBounds bounds = new CoordinateBounds(orgin, 5);
+        Brain brain = new Brain(bounds, 1, 0, 1);
         log.info("Initial Brain State:"+System.lineSeparator()+brain.toString());
         int iteration = 0;
         brain.start();
@@ -201,7 +210,7 @@ public class Brain {
         int dead = 0;
         for(Transmitters t : cerebralFluid.values()){
             count += t.getTransmitters().size();
-            dead += t.countZeroPotientials();
+            dead += t.countZeroPotentials();
         }
         transmitterCount=count;
         deadTransmitterCount = dead;

@@ -12,7 +12,6 @@ package com.trifidearth.zulu.message.transmitter;
 public class Glutamate extends Transmitter{
     
     public Glutamate() {
-        super(3D);
-        this.lifespan+=5000L;
+        super("Glutamate", 3D, 5, 60);
     }
 }

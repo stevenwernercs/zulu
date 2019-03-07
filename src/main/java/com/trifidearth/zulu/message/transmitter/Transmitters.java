@@ -9,6 +9,7 @@ package com.trifidearth.zulu.message.transmitter;
 import com.trifidearth.zulu.message.Message;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,8 +54,12 @@ public class Transmitters extends Message {
     }
     
     public void update(){
-        for(Transmitter each : transmitterList){
-            each.checkDissolved();
+        Iterator<Transmitter> transmitterIterator = transmitterList.iterator();
+        while(transmitterIterator.hasNext()) {
+            Transmitter transmitter = transmitterIterator.next();
+            if(transmitter.checkDissolved()) {
+                transmitterIterator.remove();
+            }
         }
     }
     
@@ -67,7 +72,7 @@ public class Transmitters extends Message {
         return "Transmitters{" + transmitterList.size() + '}';
     }
 
-    public int countNonZeroPotientials() {
+    public int countNonZeroPotentials() {
         int ret = 0;
         for(Transmitter each : transmitterList){
             if(each.potiential.getPotientialVoltage()!= 0D){
@@ -77,11 +82,10 @@ public class Transmitters extends Message {
         return ret;
     }
     
-    public int countZeroPotientials() {
+    public int countZeroPotentials() {
         int ret = 0;
         for(Transmitter each : transmitterList){
             if(each.potiential.getPotientialVoltage()== 0D){
-                log.info("lifespan = "+ (each.lifespan-System.currentTimeMillis()));
                 ret++;
             }
         }
