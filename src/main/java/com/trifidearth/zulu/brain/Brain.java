@@ -32,17 +32,17 @@ public class Brain {
     CoordinateBounds bounds;
     private int transmitterCount;
     private int deadTransmitterCount;
-    ConcurrentSkipListMap<Coordinate, Transmitters> ceribralFluid = new ConcurrentSkipListMap<>();
+    ConcurrentSkipListMap<Coordinate, Transmitters> cerebralFluid = new ConcurrentSkipListMap<>();
     public PrintStream out;
     
     public Brain(CoordinateBounds bounds, int inputs, int outputs) throws UnsupportedEncodingException {
         out = System.out;
         this.bounds = bounds;
         this.neurons = new ArrayList<>();
-        for(int i = 32; i < inputs+32; i++) {
+        for(int i = Character.getNumericValue('a'); i < inputs+Character.getNumericValue('a'); i++) {
             this.neurons.add(new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds)));
         }
-        for(int i = 32; i < outputs+32; i++) {
+        for(int i = Character.getNumericValue('A'); i < outputs+Character.getNumericValue('A'); i++) {
             this.neurons.add(new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds)));
         }
     }
@@ -65,8 +65,8 @@ public class Brain {
         }
     }
     
-    public Transmitters pollNearByTranmitters(Coordinate coordinate) {
-        Transmitters transmitters = ceribralFluid.get(coordinate);
+    public Transmitters pollNearByTransmitters(Coordinate coordinate) {
+        Transmitters transmitters = cerebralFluid.get(coordinate);
         if (transmitters == null){
             transmitters = new Transmitters();
         } else {
@@ -80,8 +80,8 @@ public class Brain {
      * @param coordinate
      * @return null or list containing 0 or more transmitters
      */
-    public Transmitters retreveNearByTranmitters(Coordinate coordinate) {
-        Transmitters transmitters = ceribralFluid.remove(coordinate);
+    public Transmitters retrieveNearByTransmitters(Coordinate coordinate) {
+        Transmitters transmitters = cerebralFluid.remove(coordinate);
         if (transmitters == null){
             transmitters = new Transmitters();
         } else {
@@ -96,10 +96,10 @@ public class Brain {
 
     public void depositTranmitters(Coordinate coordinate, Transmitters transmitters) {
         Transmitters value;
-        if((value = ceribralFluid.get(coordinate)) != null){
+        if((value = cerebralFluid.get(coordinate)) != null){
             transmitters.getTransmitters().addAll(value.getTransmitters());
         }
-        ceribralFluid.put(coordinate, transmitters);
+        cerebralFluid.put(coordinate, transmitters);
         
     }
     
@@ -115,7 +115,7 @@ public class Brain {
                 }
             }
         }
-        for(Map.Entry<Coordinate, Transmitters> entry : ceribralFluid.entrySet()) {
+        for(Map.Entry<Coordinate, Transmitters> entry : cerebralFluid.entrySet()) {
             String transmitterMarker = "T"+entry.getValue().getTransmitters().size();
             if(nodes.containsKey(entry.getKey())) {
                 nodes.get(entry.getKey()).add(transmitterMarker);
@@ -199,7 +199,7 @@ public class Brain {
     private void getTransmitterCount() {
         int count = 0;
         int dead = 0;
-        for(Transmitters t : ceribralFluid.values()){
+        for(Transmitters t : cerebralFluid.values()){
             count += t.getTransmitters().size();
             dead += t.countZeroPotientials();
         }

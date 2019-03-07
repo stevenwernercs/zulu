@@ -45,7 +45,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     public void update() {
         ElectricPotiential dentritalSum = new ElectricPotiential(0);
         for(Dendrite each : dentrites) {
-            dentritalSum.absorb(each.propagate(brain.retreveNearByTranmitters(each.getGrowing())));
+            dentritalSum.absorb(each.propagate(brain.retrieveNearByTransmitters(each.getGrowing())));
         }
         ActionPotiential axonIn = soma.propagate(dentritalSum);
         if(axonIn != null){
@@ -114,7 +114,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     @Override
     public String toString() {
-        return "Neuron{" + "name=" + name + ", type=" + type + ", dentrites@" + dentrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
+        return "Neuron{" + "name=" + name + ", type=" + type + ", dendrites@" + dentrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
     }
 
     @Override

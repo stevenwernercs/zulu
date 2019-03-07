@@ -23,7 +23,7 @@ public class Transmitters extends Message {
     private static final Logger log = Logger.getLogger(Transmitters.class);
     
     private final ConcurrentLinkedQueue<Transmitter> transmitterList = new ConcurrentLinkedQueue<>();
-    private static final List<Transmitter> AVALIBLE_TRANSMITTERS = new ArrayList<>(Arrays.asList(
+    private static final List<Transmitter> AVAILABLE_TRANSMITTERS = new ArrayList<>(Arrays.asList(
         new Acetlylcholine(),
         new Adrenaline(),
         new Dopamine(),
@@ -36,8 +36,8 @@ public class Transmitters extends Message {
    
     public static Transmitters getRandomTransmitters() {
         Transmitters t = new Transmitters();
-        for (int i = (int)(Math.random() * AVALIBLE_TRANSMITTERS.size()); i >= 0; i--){
-            t.getTransmitters().add(AVALIBLE_TRANSMITTERS.get((int)(Math.random()*AVALIBLE_TRANSMITTERS.size())));
+        for (int i = (int)(Math.random() * AVAILABLE_TRANSMITTERS.size()); i >= 0; i--){
+            t.getTransmitters().add(AVAILABLE_TRANSMITTERS.get((int)(Math.random()* AVAILABLE_TRANSMITTERS.size())));
         }
         return t;
     }
@@ -54,7 +54,7 @@ public class Transmitters extends Message {
     
     public void update(){
         for(Transmitter each : transmitterList){
-            each.checkDesolved();
+            each.checkDissolved();
         }
     }
     

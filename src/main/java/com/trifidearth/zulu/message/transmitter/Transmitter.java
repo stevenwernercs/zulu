@@ -24,7 +24,7 @@ public abstract class Transmitter extends Message {
         this.potiential = new ElectricPotiential(potiential);
     }
     
-    public void checkDesolved() {
+    public void checkDissolved() {
         long systemTime = System.currentTimeMillis();
         if(lifespan < systemTime) {
             log.trace("lifespan = "+ (this.lifespan-System.currentTimeMillis()));

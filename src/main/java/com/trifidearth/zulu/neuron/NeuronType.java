@@ -11,6 +11,6 @@ package com.trifidearth.zulu.neuron;
  */
 public enum NeuronType {
         SENSORY,
-        RELAY,
+        INTER_NEURON,
         MOTOR
 }
