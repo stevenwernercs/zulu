@@ -50,11 +50,11 @@ public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> i
         int deadNearby = nearby.countZeroPotentials();
         int aliveNearby = nearby.countZeroPotentials();
         if (deadNearby > 0) {
-            wander=5D;
+            wander+=10D;
         } else if(aliveNearby==0) {
-            wander=Math.min(wander-1D, 0D);
-        } else {
             wander-=1D;
+        } else {
+            wander-=100D;
         }
     }
 }

@@ -30,9 +30,9 @@ public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential
 
     @Override
     public ElectricPotiential propagate(Transmitters transmitters) {
-        int recievedCount = transmitters.countNonZeroPotentials();
-        if(recievedCount > 0){
-            wander = Math.min(wander-recievedCount, 0);
+        int receivedCount = transmitters.countNonZeroPotentials();
+        if(receivedCount > 0){
+            wander = Math.min(wander-(receivedCount*100), 0);
         } else {
             wander += 1D;
         }

@@ -12,6 +12,6 @@ package com.trifidearth.zulu.message.transmitter;
 public class Endorphins extends Transmitter{
     
     public Endorphins() {
-        super("Endorphins", 9.5D, 8, 60);
+        super("Endorphins", 19.5D, 8, 60);
     }
 }

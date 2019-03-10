@@ -39,10 +39,10 @@ public abstract class Transmitter extends Message {
         if(dieTime < systemTime) {
             potiential.setPotientialVoltage(0D);
             if(decayTime < systemTime) {
-                log.trace(name + "'s decayspan of "+ decayspanSeconds + " second(s) is overdue by = "+ Utils.getSecondOfMillis(System.currentTimeMillis() - decayTime) + " second(s)");
+                log.trace(name + "'s decayspan of "+ decayspanSeconds + " second(s) is overdue: = "+ Utils.getSecondOfMillis(System.currentTimeMillis() - decayTime) + " second(s)");
                 return true;
             }
-            log.trace(name + "'s lifespan of "+ lifespanSeconds + " second(s) is overdue by = "+ Utils.getSecondOfMillis(System.currentTimeMillis() - dieTime) + " second(s)");
+            log.trace(name + "'s lifespan of "+ lifespanSeconds + " second(s) is overdue: "+ Utils.getSecondOfMillis(System.currentTimeMillis() - dieTime) + " second(s)");
             potiential.setPotientialVoltage(0D);
         }
         return false;

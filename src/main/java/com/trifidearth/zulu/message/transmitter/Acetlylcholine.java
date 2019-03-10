@@ -18,7 +18,7 @@ public class Acetlylcholine extends Transmitter{
     private static final Logger log = Logger.getLogger(Acetlylcholine.class);
     
     public Acetlylcholine() {
-        super("Acetlylcholine", 8.4D, 10, 60);
+        super("Acetlylcholine", 18.4D, 10, 60);
     }
     
 }

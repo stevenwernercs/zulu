@@ -28,26 +28,30 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     Brain brain;
     int name;
     NeuronType type;
-    ConcurrentLinkedQueue<Dendrite> dentrites;
+    ConcurrentLinkedQueue<Dendrite> dendrites;
     Soma soma;
     Axon axon;
     ConcurrentLinkedQueue<Synapse> synapses;
+    int maxNumberDendrites;
+    int maxNumberSynapses;
 
-    public Neuron(Brain brain, int name, NeuronType type, Coordinate fixedPoint) {
+    public Neuron(Brain brain, int name, NeuronType type, Coordinate fixedPoint, int maxNumberDendrites, int maxNumberSynapses) {
         super(fixedPoint);
         this.brain = brain;
         this.name = name;
         this.type =  type;
+        this.maxNumberDendrites = maxNumberDendrites;
+        this.maxNumberSynapses = maxNumberSynapses;
         init(fixedPoint, brain.getBounds());
     }
 
     @Override
     public void update() {
-        ElectricPotiential dentritalSum = new ElectricPotiential(0);
-        for(Dendrite each : dentrites) {
-            dentritalSum.absorb(each.propagate(brain.retrieveNearByTransmitters(each.getGrowing())));
+        ElectricPotiential dendritalSum = new ElectricPotiential(0);
+        for(Dendrite each : dendrites) {
+            dendritalSum.absorb(each.propagate(brain.retrieveNearByTransmitters(each.getGrowing())));
         }
-        ActionPotiential axonIn = soma.propagate(dentritalSum);
+        ActionPotiential axonIn = soma.propagate(dendritalSum);
         if(axonIn != null){
             if(NeuronType.MOTOR.equals(type)) {
                 brain.out.println(String.valueOf(Character.toChars(name)));
@@ -62,7 +66,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     
     private void init(Coordinate coordinate, CoordinateBounds bounds){
         CoordinatePair point = new CoordinatePair(coordinate);
-        dentrites = new ConcurrentLinkedQueue<>();
+        dendrites = new ConcurrentLinkedQueue<>();
         soma = new Soma(point, new ElectricPotiential(0));
         axon = new Axon(point);
         axon.grow(brain.getBounds());
@@ -73,13 +77,13 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     @Override
     public void grow(CoordinateBounds bounds) {
-        if(Math.random() < (1D/(dentrites.size()+1D))) {
-            dentrites.add(new Dendrite(soma.getFixed()));
+        if(dendrites.size() < maxNumberDendrites && Math.random() < (1D/Math.pow(2,dendrites.size()))) {
+            dendrites.add(new Dendrite(soma.getFixed()));
         }
-        for(Dendrite each : dentrites) {
+        for(Dendrite each : dendrites) {
             each.grow(bounds);
         }
-        if(Math.random() < (1D/(synapses.size()+1D))) {
+        if(synapses.size() < maxNumberSynapses && Math.random() < (1D/Math.pow(2,synapses.size()))) {
             synapses.add(new Synapse(axon.getGrowing(), this));
         }
         for(Synapse each : synapses) {
@@ -92,7 +96,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
         Map map2 = new HashMap();
         appendAtLocation(map, soma.getfixedPoint(), name+"_N");
         appendAtLocation(map, axon.getGrowing(), name+"_A");
-        for(Dendrite d : dentrites) {
+        for(Dendrite d : dendrites) {
             appendAtLocation(map, d.getGrowing(), name+"_D");    
         }
         for(Synapse s : synapses) {
@@ -115,7 +119,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     @Override
     public String toString() {
-        return "Neuron{" + "name=" + name + ", type=" + type + ", dendrites@" + dentrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
+        return "Neuron{" + "name=" + name + ", type=" + type + ", dendrites@" + dendrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
     }
 
     @Override

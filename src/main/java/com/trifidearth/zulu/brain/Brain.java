@@ -40,17 +40,17 @@ public class Brain {
         this.bounds = bounds;
         this.neurons = new ArrayList<>();
         for (int i = 'a'; i < inputs + 'a'; i++) {
-            Neuron sensor = new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds));
+            Neuron sensor = new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds), 1, 5);
             log.trace("Created new Neuron: " + sensor);
             this.neurons.add(sensor);
         }
         for (int i = 0; i < relay; i++) {
-            Neuron inter = new Neuron(this, i, NeuronType.INTER_NEURON, new Coordinate(bounds));
+            Neuron inter = new Neuron(this, i, NeuronType.INTER_NEURON, new Coordinate(bounds), 5, 5);
             log.trace("Created new Neuron: " + inter);
             this.neurons.add(inter);
         }
         for (int i = 'A'; i < outputs + 'A'; i++) {
-            Neuron motor = new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds));
+            Neuron motor = new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds), 5, 1);
             log.trace("Created new Neuron: " + motor);
             this.neurons.add(motor);
         }
@@ -173,14 +173,14 @@ public class Brain {
     }
     
     public static void main(String args []) throws InterruptedException, UnsupportedEncodingException{
-        Coordinate orgin = new Coordinate(0, 0, 0);
-        CoordinateBounds bounds = new CoordinateBounds(orgin, 5);
-        Brain brain = new Brain(bounds, 1, 0, 1);
+        Coordinate origin = new Coordinate(0, 0, 0);
+        CoordinateBounds bounds = new CoordinateBounds(origin, 10);
+        Brain brain = new Brain(bounds, 1, 2, 1);
         log.info("Initial Brain State:"+System.lineSeparator()+brain.toString());
         int iteration = 0;
         brain.start();
             while(true) {
-                Thread.sleep(5000);
+                Thread.sleep(1000);
                 brain.grow();
                 brain.getTransmitterCount();
                 log.info("Brain State " + iteration + System.lineSeparator() + brain.toString());
