@@ -19,7 +19,26 @@
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
         </dependency>
+	<!-- https://mvnrepository.com/artifact/com.microsoft.msr.malmo/MalmoJavaJar -->
 	<dependency>
+		<groupId>com.microsoft.msr.malmo</groupId>
+		<artifactId>MalmoJavaJar</artifactId>
+		<version>0.0.1-local</version>
+		<!--version>0.30.0</version-->
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/javax.json/javax.json-api -->
+	<!-- dependency>
+		<groupId>javax.json</groupId>
+		<artifactId>javax.json-api</artifactId>
+		<version>1.1.4</version>
+	</dependency -->
+	<!-- https://mvnrepository.com/artifact/org.json/json -->
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20180813</version>
+	</dependency>
+		<dependency>
 	    <groupId>org.lwjgl</groupId>
 	    <artifactId>lwjgl</artifactId>
 	    <version>${lwjgl.version}</version>
@@ -227,4 +246,45 @@
 	    <classifier>${lwjgl.natives}</classifier>
 	</dependency>
     </dependencies>
+   <build>
+	<plugins>
+	   <plugin>
+		<artifactId>maven-dependency-plugin</artifactId>
+		<executions>
+			<execution>
+				<phase>prepare-package</phase>
+				<goals>
+					<goal>copy-dependencies</goal>
+				</goals>
+				<configuration>
+					<outputDirectory>${project.build.directory}/lib</outputDirectory>
+				</configuration>
+			</execution>
+		</executions>
+      </plugin>
+		<plugin>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>3.1.0</version>
+			<executions>
+				<execution>
+					<id>copy-resources</id>
+					<!-- here the phase you need -->
+					<phase>validate</phase>
+					<goals>
+						<goal>copy-resources</goal>
+					</goals>
+					<configuration>
+						<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						<resources>
+							<resource>
+								<directory>lib</directory>
+								<filtering>false</filtering>
+							</resource>
+						</resources>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+  </build>
 </project>
