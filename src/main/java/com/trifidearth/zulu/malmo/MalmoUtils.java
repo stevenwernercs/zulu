@@ -1,5 +1,6 @@
 package com.trifidearth.zulu.malmo;
 
+import com.microsoft.msr.malmo.AgentHost;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
@@ -193,10 +194,27 @@ public class MalmoUtils {
 		currentItemIndex,
 		inventoriesAvailable,
 
+		//Chat
+		Chat,
+
         //unknown
         placeholder,
 
-    }
+
+		//Propioception:
+		  //boolean
+		_crouch,
+		_jump,
+		_attack,
+		_use,
+		  //range
+		_pitch,
+		_turn,
+		_strafe,
+		_move,
+
+	}
+
 
     public static double getRandomRange() {
         return getRandomRange(-1, 1);
@@ -205,6 +223,13 @@ public class MalmoUtils {
     public static double getRandomRange(double lower, double upper) {
         return Math.random()*(upper - lower) + lower;
     }
+
+	public static boolean coinTossWeighted(double percentage) {
+    	return Math.random() < percentage;
+	}
+    public static boolean coinToss() {
+    	return coinTossWeighted(.5d);
+	}
 
     public static Map<OBSERVATION, String> pasrseObservationJson(String observationJson) {
 
@@ -240,4 +265,102 @@ public class MalmoUtils {
 
         return observations;
     }
+
+    public static void randomBehavior( Map<MalmoUtils.OBSERVATION,String> observations, AgentHost agent_host) {
+
+		{
+			boolean jumpState = observations.get(MalmoUtils.OBSERVATION._jump).equals("1");
+			boolean crouchState = observations.get(MalmoUtils.OBSERVATION._crouch).equals("1");
+			if ((jumpState || crouchState) && MalmoUtils.coinTossWeighted(.3d)) {
+				agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.jump.get(false));
+				observations.put(MalmoUtils.OBSERVATION._jump, "0");
+				agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.crouch.get(false));
+				observations.put(MalmoUtils.OBSERVATION._crouch, "0");
+			} else if (MalmoUtils.coinTossWeighted(.02d)) {
+				if (MalmoUtils.coinTossWeighted(.95)) {
+					agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.jump.get(true));
+					observations.put(MalmoUtils.OBSERVATION._jump, "1");
+				} else {
+					agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.crouch.get(true));
+					observations.put(MalmoUtils.OBSERVATION._crouch, "1");
+				}
+			}
+		}
+
+		{
+			boolean useState = observations.get(MalmoUtils.OBSERVATION._use).equals("1");
+			boolean attackState = observations.get(MalmoUtils.OBSERVATION._attack).equals("1");
+			if ((useState || attackState) && MalmoUtils.coinTossWeighted(.03d)) {
+				agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.attack.get(false));
+				observations.put(MalmoUtils.OBSERVATION._attack, "0");
+				agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.use.get(false));
+				observations.put(MalmoUtils.OBSERVATION._use, "0");
+			} else if (MalmoUtils.coinTossWeighted(.3d)) {
+				if (MalmoUtils.coinTossWeighted(.5d)) {
+					agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.attack.get(true));
+					observations.put(MalmoUtils.OBSERVATION._attack, "1");
+				} else {
+					agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.use.get(true));
+					observations.put(MalmoUtils.OBSERVATION._use, "1");
+				}
+			}
+		}
+
+		{
+			boolean strafeState = !observations.get(MalmoUtils.OBSERVATION._strafe).equals("0");
+			if (strafeState && MalmoUtils.coinTossWeighted(.7d)) {
+				agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.strafe.get(0));
+				observations.put(MalmoUtils.OBSERVATION._strafe, "0");
+			} else if (MalmoUtils.coinTossWeighted(.20d)) {
+				double value = MalmoUtils.getRandomRange();
+				agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.strafe.get(value));
+				observations.put(MalmoUtils.OBSERVATION._strafe, value + "");
+			}
+		}
+
+		{
+			boolean moveState = !observations.get(MalmoUtils.OBSERVATION._move).equals("0");
+			if (moveState && MalmoUtils.coinTossWeighted(.3d)) {
+				agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.move.get(0));
+				observations.put(MalmoUtils.OBSERVATION._move, "0");
+			} else if (MalmoUtils.coinTossWeighted(.50d)) {
+				double value = MalmoUtils.getRandomRange();
+				agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.move.get(value));
+				observations.put(MalmoUtils.OBSERVATION._move, value + "");
+			}
+		}
+
+		{
+			boolean pitchState = !observations.get(MalmoUtils.OBSERVATION._pitch).equals("0");
+			if (pitchState && MalmoUtils.coinTossWeighted(.7d)) {
+				agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.pitch.get(0));
+				observations.put(MalmoUtils.OBSERVATION._pitch, "0");
+			} else if (MalmoUtils.coinTossWeighted(.20d)) {
+				String pitchValueString = observations.get(MalmoUtils.OBSERVATION.Pitch);
+				double value = MalmoUtils.getRandomRange();
+				if(pitchValueString != null) {
+					double pitchValue = Double.parseDouble(pitchValueString);
+					if(pitchValue > 30) {
+						value = MalmoUtils.getRandomRange(-1, 0);
+					} else if(pitchValue < -30) {
+						value = MalmoUtils.getRandomRange(0, 1);
+					}
+				}
+				agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.pitch.get(value));
+				observations.put(MalmoUtils.OBSERVATION._pitch, value + "");
+			}
+		}
+
+		{
+			boolean turnState = !observations.get(MalmoUtils.OBSERVATION._turn).equals("0");
+			if (turnState && MalmoUtils.coinTossWeighted(.7d)) {
+				agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.turn.get(0));
+				observations.put(MalmoUtils.OBSERVATION._turn, "0");
+			} else if (MalmoUtils.coinTossWeighted(.20d)) {
+				double value = MalmoUtils.getRandomRange();
+				agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.turn.get(value));
+				observations.put(MalmoUtils.OBSERVATION._turn, value + "");
+			}
+		}
+	}
 }

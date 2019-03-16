@@ -31,6 +31,8 @@ import com.trifidearth.zulu.utils.Utils;
 
 import java.io.File;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.DoubleAccumulator;
 
 public class MinecraftANN
 {
@@ -79,10 +81,10 @@ public class MinecraftANN
 
         System.out.println(my_mission.getAsXML(true));
 
-        my_mission.allowAllAbsoluteMovementCommands();
+        //my_mission.allowAllAbsoluteMovementCommands();
         my_mission.allowAllChatCommands();
         my_mission.allowAllContinuousMovementCommands();
-        my_mission.allowAllDiscreteMovementCommands();
+        //my_mission.allowAllDiscreteMovementCommands();
         my_mission.allowAllInventoryCommands();
 
         System.out.println("Commands for role " + 0);
@@ -136,37 +138,23 @@ public class MinecraftANN
         //Setup more level configs
         agent_host.sendCommand( "chat /effect @p minecraft:hunger 5 255");
         agent_host.sendCommand( "chat /effect @p minecraft:instant_damage 1 1");
+        System.out.println("Bringing random based brain online... in 8 seconds...");
+        Thread.sleep(8000);
+
+        Map<MalmoUtils.OBSERVATION,String> observations = new TreeMap<>();
+
+        //set initial state for self (not apart of malmo observations, keeping state internally)
+        observations.put(MalmoUtils.OBSERVATION._crouch, "0");
+        observations.put(MalmoUtils.OBSERVATION._jump, "0");
+        observations.put(MalmoUtils.OBSERVATION._use, "0");
+        observations.put(MalmoUtils.OBSERVATION._attack, "0");
+        observations.put(MalmoUtils.OBSERVATION._turn, "0");
+        observations.put(MalmoUtils.OBSERVATION._pitch, "0");
+        observations.put(MalmoUtils.OBSERVATION._move, "0");
+        observations.put(MalmoUtils.OBSERVATION._strafe, "0");
 
         // main loop:
         do {
-            agent_host.sendCommand( MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.attack.get(false) );
-            agent_host.sendCommand( MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.use.get(false) );
-            agent_host.sendCommand( MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.jump.get(false) );
-            agent_host.sendCommand( MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.crouch.get(false) );
-            agent_host.sendCommand( MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.pitch.get(0d) );
-            agent_host.sendCommand( MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.turn.get(0d) );
-
-            double choice = Math.random();
-            if(choice < .03) {
-                agent_host.sendCommand( MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.crouch.get(true) );
-            } else if(choice < .08) {
-                agent_host.sendCommand( MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.jump.get(true) );
-            } else if(choice < .16) {
-                agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.strafe.get(MalmoUtils.getRandomRange()) );
-            } else if(choice < .32) {
-                if (Math.random() < .5) {
-                    agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.attack.get(true));
-                } else {
-                    agent_host.sendCommand(MalmoUtils.BOOLEAN_MOVEMENT_COMMAND.use.get(true));
-                }
-            } else if(choice < .64) {
-                agent_host.sendCommand( MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.move.get(MalmoUtils.getRandomRange()) );
-            } else if(choice < .75) {
-                agent_host.sendCommand(MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.pitch.get(MalmoUtils.getRandomRange()/2d));
-            } else {
-                agent_host.sendCommand( MalmoUtils.CONTINUOUS_MOVEMENT_COMMAND.turn.get(MalmoUtils.getRandomRange()) );
-            }
-
 
             try {
                 Thread.sleep(100);
@@ -186,11 +174,12 @@ public class MinecraftANN
 
             TimestampedStringVector timestampedStringVector = world_state.getObservations();
             System.out.println("Printing " + timestampedStringVector.size() + " Observation sets:");
+
             for( int i = 0; i < timestampedStringVector.size(); i++ ) {
                 TimestampedString observationTimestampedString = timestampedStringVector.get(i);
                 String observationJson = observationTimestampedString.getText();
                 System.out.println(observationJson);
-                Map<MalmoUtils.OBSERVATION, String> observations = MalmoUtils.pasrseObservationJson(observationJson);
+                observations.putAll(MalmoUtils.pasrseObservationJson(observationJson));
                 System.out.println("\tObservation set " + i + " with " + observations.size() + " Observations:");
                 for(Map.Entry<MalmoUtils.OBSERVATION,String> observation : observations.entrySet()) {
                     System.out.println("\t\tObservation set " + i + ": " + observation.getKey().name() + "\t: " + observation.getValue());
@@ -202,10 +191,14 @@ public class MinecraftANN
             System.out.print( world_state.getNumberOfVideoFramesSinceLastState() + "," );
             System.out.print( world_state.getNumberOfObservationsSinceLastState() + "," );
             System.out.println( world_state.getNumberOfRewardsSinceLastState() );
+
+            MalmoUtils.randomBehavior(observations, agent_host);
+
             for( int i = 0; i < world_state.getRewards().size(); i++ ) {
                 TimestampedReward reward = world_state.getRewards().get(i);
                 System.out.println( "Summed reward: " + reward.getValue() );
             }
+
             for( int i = 0; i < world_state.getErrors().size(); i++ ) {
                 TimestampedString error = world_state.getErrors().get(i);
                 System.err.println( "Error: " + error.getText() );

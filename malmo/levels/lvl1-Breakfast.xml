@@ -25,10 +25,12 @@
 	<AgentSection>
 		<Name>Baby Steve</Name>
 		<AgentStart>
-			<Placement x="24" y="69" z="220" yaw="0"/>
+			<Placement x="0" y="69" z="220" yaw="0"/>
+			<!--Placement x="24" y="69" z="220" yaw="0"/-->
 			<Inventory>
 				<InventoryItem slot="0" type="apple" quantity="3"/>
-				<InventoryItem slot="1" type="wooden_pickaxe"/>
+				<InventoryItem slot="1" type="diamond_axe"/>
+				<InventoryItem slot="2" type="diamond_pickaxe"/>
 			</Inventory>
 		</AgentStart>
 		<AgentHandlers>
@@ -46,7 +48,7 @@
 			
 			<!-- Commands -->
 			<ContinuousMovementCommands/>
-			<HumanLevelCommands/>
+			<!--HumanLevelCommands/-->
 			<InventoryCommands/>
 			<ChatCommands/>
 			<SimpleCraftCommands/>
