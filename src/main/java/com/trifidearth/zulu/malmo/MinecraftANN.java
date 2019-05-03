@@ -70,7 +70,7 @@ public class MinecraftANN
         //MissionSpec my_mission = new MissionSpec();
         MissionSpec my_mission = new MissionSpec(missionXML, true);
         my_mission.timeLimitInSeconds(100);
-        my_mission.requestVideo( 640, 480 );
+        my_mission.requestVideo( 1280, 960 );
         my_mission.rewardForReachingPosition(19.5f,0.0f,19.5f,100.0f,1.1f);
 
         MissionRecordSpec my_mission_record = new MissionRecordSpec("./saved_data.tgz");

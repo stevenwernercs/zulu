@@ -194,6 +194,17 @@ public class MalmoUtils {
 		currentItemIndex,
 		inventoriesAvailable,
 
+		//Hotbar Variants
+		Hotbar_0_variant,
+		Hotbar_1_variant,
+		Hotbar_2_variant,
+		Hotbar_3_variant,
+		Hotbar_4_variant,
+		Hotbar_5_variant,
+		Hotbar_6_variant,
+		Hotbar_7_variant,
+		Hotbar_8_variant,
+
 		//Chat
 		Chat,
 
