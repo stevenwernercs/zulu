@@ -5,6 +5,8 @@
  */
 package com.trifidearth.zulu.coordinate;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author iSteve
@@ -92,5 +94,12 @@ public class CoordinatePair {
     @Override
     public String toString() {
         return "<"+fixed.toString() + "," + growing.toString()+">";
+    }
+
+    public JSONObject toJson() {
+        JSONObject pair = new JSONObject();
+        pair.put("fixed", fixed.toJson());
+        pair.put("growing", growing.toJson());
+        return pair;
     }
 }

@@ -5,10 +5,12 @@
  */
 package com.trifidearth.zulu.neuron;
 
+import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.message.potiential.ActionPotiential;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  *
@@ -23,6 +25,11 @@ public class Axon extends CommunicationNode<ActionPotiential, ActionPotiential> 
     public Axon(CoordinatePair coordinatesPair) {
         super(coordinatesPair);
         this.distance = coordinatesPair.distance();
+    }
+
+    public Axon(Coordinate somaPoint, JSONObject jsonObject) {
+        super(new CoordinatePair(somaPoint, new Coordinate(jsonObject.getJSONObject("endpoint"))));
+        this.distance = jsonObject.getDouble("distance");
     }
     
     /**
@@ -53,5 +60,13 @@ public class Axon extends CommunicationNode<ActionPotiential, ActionPotiential> 
             throw new RuntimeException("can only grow an axon once");
         }
         
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject axon = new JSONObject();
+        axon.put("distance", this.distance);
+        axon.put("endpoint", this.getCoordinatePair().getGrowing().toJson());
+        return axon;
     }
 }

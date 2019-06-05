@@ -11,6 +11,7 @@ import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.message.potiential.ElectricPotiential;
 import com.trifidearth.zulu.message.transmitter.Transmitter;
 import com.trifidearth.zulu.message.transmitter.Transmitters;
+import org.json.JSONObject;
 
 /**
  *
@@ -42,8 +43,9 @@ public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential
         for(Transmitter each : transmitters.getTransmitters()){
             //ep.absorb(each.getElectricPotiential());
             sum += each.getElectricPotiential().getPotientialVoltage();
+            each.getElectricPotiential().forcePotientialVoltage(0);
         }
-        ep.setPotientialVoltage(sum);
+        ep.absorb(sum);
         return ep;
     }
 

@@ -6,6 +6,7 @@
 package com.trifidearth.zulu.neuron;
 
 import com.trifidearth.zulu.coordinate.Coordinate;
+import org.json.JSONObject;
 
 /**
  *
@@ -35,5 +36,7 @@ public abstract class Node {
     public boolean isAlive() {
         return isAlive;
     }
-    
+
+    public abstract JSONObject toJson();
+
 }

@@ -5,6 +5,9 @@
  */
 package com.trifidearth.zulu.coordinate;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  *
  * @author iSteve
@@ -19,6 +22,11 @@ public class CoordinateBounds {
         this.radius = radius;
     }
 
+    public CoordinateBounds(JSONObject bounds) {
+        this.origin = new Coordinate(bounds.getJSONObject("origin"));
+        this.radius = bounds.getInt("radius");
+    }
+
     public int getRadius() {
         return radius;
     }
@@ -31,6 +39,12 @@ public class CoordinateBounds {
     boolean outOf(Coordinate growPoint) {
         return origin.computeDistanceTo(growPoint) > radius;
     }
-    
-    
+
+
+    public JSONObject toJson() {
+        JSONObject object = new JSONObject();
+        object.put("radius", radius);
+        object.put("origin", origin.toJson());
+        return object;
+    }
 }

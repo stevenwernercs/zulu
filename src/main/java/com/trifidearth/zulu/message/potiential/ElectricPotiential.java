@@ -23,16 +23,30 @@ public class ElectricPotiential extends Message{
     }
     
     public void absorb(ElectricPotiential input) {
-        this.potientialVoltage += input.potientialVoltage;
+        absorb(input.potientialVoltage);
         input.potientialVoltage = 0;
+    }
+
+    public synchronized void absorb(double inputVoltage) {
+        updatePotientialVoltage(potientialVoltage + inputVoltage);
     }
 
     public double getPotientialVoltage() {
         return potientialVoltage;
     }
 
-    public void setPotientialVoltage(double potientialVoltage) {
+    public synchronized void forcePotientialVoltage(double potientialVoltage) {
         this.potientialVoltage = potientialVoltage;
+    }
+
+    public synchronized void updatePotientialVoltage(double potientialVoltage) {
+        //System.out.println(this.potientialVoltage + "<<<<" + potientialVoltage);
+        this.potientialVoltage = (this.potientialVoltage + (4d*potientialVoltage)) / 5d;
+        //System.out.println(this.potientialVoltage);
+    }
+
+    public boolean isEmpty() {
+        return potientialVoltage == 0D;
     }
 
     @Override

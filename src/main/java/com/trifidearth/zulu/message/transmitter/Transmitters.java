@@ -55,14 +55,25 @@ public class Transmitters extends Message {
     
     public void update(){
         Iterator<Transmitter> transmitterIterator = transmitterList.iterator();
+        log.trace("START TRANSMITTER SIZE: " + transmitterList.size());
         while(transmitterIterator.hasNext()) {
             Transmitter transmitter = transmitterIterator.next();
             if(transmitter.checkDissolved()) {
                 transmitterIterator.remove();
+                log.trace("REMOVING: " + transmitter.toString());
             }
         }
+        log.trace("END TRANSMITTER SIZE: " + transmitterList.size());
     }
-    
+
+    public boolean isEmpty() {
+        return transmitterList.isEmpty();
+    }
+
+    public int size() {
+        return transmitterList.size();
+    }
+
     public List<String> getTransmittersAsStrings() {
         return transmitterList.stream().map(t -> t.toString()).collect(Collectors.toList());
     }

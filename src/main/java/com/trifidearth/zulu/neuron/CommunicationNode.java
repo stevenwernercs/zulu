@@ -8,6 +8,7 @@ package com.trifidearth.zulu.neuron;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.message.Message;
+import org.json.JSONObject;
 
 /**
  *
@@ -35,6 +36,11 @@ public abstract class CommunicationNode <I extends Message, O extends Message> e
     public Coordinate getGrowing() {
         return coordinatePair.getGrowing();
     }
-    
+
+    @Override
+    public JSONObject toJson() {
+        return this.getCoordinatePair().getGrowing().toJson();
+    }
+
     public abstract O propagate(I input);
 }

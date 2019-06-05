@@ -10,16 +10,15 @@ import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.message.transmitter.Transmitters;
 import com.trifidearth.zulu.neuron.Neuron;
 import com.trifidearth.zulu.neuron.NeuronType;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
+
+import com.trifidearth.zulu.utils.Utils;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -29,6 +28,7 @@ public class Brain {
     
     private static final Logger log = Logger.getLogger(Brain.class);
     Collection<Neuron> neurons;
+    Map<String, Neuron> sensors;
     CoordinateBounds bounds;
     private int transmitterCount;
     private int deadTransmitterCount;
@@ -38,11 +38,13 @@ public class Brain {
     public Brain(CoordinateBounds bounds, int inputs, int relay, int outputs) throws UnsupportedEncodingException {
         out = System.out;
         this.bounds = bounds;
-        this.neurons = new ArrayList<>();
+        this.neurons = new ArrayList<>(inputs + relay + outputs);
+        this.sensors = new HashMap<>(inputs);
         for (int i = 'a'; i < inputs + 'a'; i++) {
             Neuron sensor = new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds));
             log.trace("Created new Neuron: " + sensor);
             this.neurons.add(sensor);
+            this.sensors.put(String.valueOf(Character.toChars(i)), sensor);
         }
         for (int i = 0; i < relay; i++) {
             Neuron inter = new Neuron(this, i, NeuronType.INTER_NEURON, new Coordinate(bounds));
@@ -53,6 +55,25 @@ public class Brain {
             Neuron motor = new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds));
             log.trace("Created new Neuron: " + motor);
             this.neurons.add(motor);
+        }
+    }
+
+    public Brain(File jsonFile) throws IOException {
+        this.out = System.out;
+        String jsonString = Utils.readFile(jsonFile);
+        JSONObject json = new JSONObject(jsonString);
+        this.bounds = new CoordinateBounds(json.getJSONObject("bounds"));
+
+        JSONArray neurons = json.getJSONArray("neurons");
+        this.neurons = new ArrayList<>(neurons.length());
+        this.sensors = new HashMap<>(neurons.length());
+        for(Object obj : neurons) {
+           JSONObject neuronObj = (JSONObject)obj;
+           Neuron neuron = new Neuron(this, neuronObj);
+           if(neuron.type.equals(NeuronType.SENSORY)) {
+               this.sensors.put(String.valueOf(Character.toChars(neuron.name)), neuron);
+           }
+           this.neurons.add(neuron);
         }
     }
 
@@ -81,6 +102,9 @@ public class Brain {
         } else {
             transmitters.update();  //remove old ones!
         }
+        if (transmitters.isEmpty()) {
+            cerebralFluid.remove(coordinate);
+        }
         return transmitters;
     }
     
@@ -103,7 +127,7 @@ public class Brain {
         return transmitters;
     }
 
-    public void depositTranmitters(Coordinate coordinate, Transmitters transmitters) {
+    public void depositTransmitters(Coordinate coordinate, Transmitters transmitters) {
         Transmitters value;
         if((value = cerebralFluid.get(coordinate)) != null){
             transmitters.getTransmitters().addAll(value.getTransmitters());
@@ -171,18 +195,57 @@ public class Brain {
         }
         return sb.toString();
     }
-    
-    public static void main(String args []) throws InterruptedException, UnsupportedEncodingException{
-        Coordinate orgin = new Coordinate(0, 0, 0);
-        CoordinateBounds bounds = new CoordinateBounds(orgin, 5);
-        Brain brain = new Brain(bounds, 1, 0, 1);
+
+    public void serialize(File output) throws FileNotFoundException {
+        JSONObject brain = new JSONObject();
+
+        brain.put("bounds", this.bounds.toJson());
+
+        JSONArray neurons = new JSONArray();
+        for(Neuron neuron : this.neurons) {
+            neurons.put(neuron.toJson());
+        }
+        brain.put("neurons", neurons);
+
+        log.trace(brain.toString(2));
+        try (PrintWriter out = new PrintWriter(output)) {
+            out.println(brain.toString(2));
+        }
+    }
+
+    public void stimulate(String key) {
+        if(sensors.containsKey(key)) {
+            sensors.get(key).stimulate(30d);
+
+        }
+    }
+
+    public static void main(String args []) throws InterruptedException, IOException {
+
+        Brain brain;
+        String output = "brain.json";
+        if(args.length == 0) {
+            Coordinate orgin = new Coordinate(0, 0, 0);
+            CoordinateBounds bounds = new CoordinateBounds(orgin, 5);
+            brain = new Brain(bounds, 1, 0, 1);
+        } else {
+            brain = new Brain(new File(args[0]));
+            output = args[0] + "_new";
+        }
+        KeyboardEnvironment env = new KeyboardEnvironment(brain);
+        Thread envT = new Thread(env);
+        envT.start();
         log.info("Initial Brain State:"+System.lineSeparator()+brain.toString());
         int iteration = 0;
         brain.start();
             while(true) {
+                for(Neuron sensor : brain.sensors.values()) {
+                    sensor.stimulate(30d);
+                }
                 Thread.sleep(5000);
+                //brain.serialize(new File(output));
                 brain.grow();
-                brain.getTransmitterCount();
+                brain.viceralCleansing();
                 log.info("Brain State " + iteration + System.lineSeparator() + brain.toString());
                 log.info(brain.getPlot());
                 iteration++;
@@ -205,14 +268,23 @@ public class Brain {
         return sb.toString();
     }
 
-    private void getTransmitterCount() {
+    public void viceralCleansing() {
+        Set<Coordinate> remove = new HashSet<>();
         int count = 0;
         int dead = 0;
-        for(Transmitters t : cerebralFluid.values()){
-            count += t.getTransmitters().size();
-            dead += t.countZeroPotentials();
+        for(Map.Entry<Coordinate, Transmitters> transmittersEntry : cerebralFluid.entrySet()) {
+            transmittersEntry.getValue().update();
+            if(transmittersEntry.getValue().isEmpty()) {
+                remove.add(transmittersEntry.getKey());
+            } else {
+                count += transmittersEntry.getValue().size();
+                dead += transmittersEntry.getValue().countZeroPotentials();
+            }
         }
-        transmitterCount=count;
+        transmitterCount = count;
         deadTransmitterCount = dead;
+        for(Coordinate coordinate : remove) {
+            cerebralFluid.remove(coordinate);
+        }
     }
 }

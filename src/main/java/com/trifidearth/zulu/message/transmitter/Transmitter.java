@@ -37,13 +37,12 @@ public abstract class Transmitter extends Message {
     public boolean checkDissolved() {
         long systemTime = System.currentTimeMillis();
         if(dieTime < systemTime) {
-            potiential.setPotientialVoltage(0D);
+            potiential.forcePotientialVoltage(0D);
             if(decayTime < systemTime) {
-                log.trace(name + "'s decayspan of "+ decayspanSeconds + " second(s) is overdue by = "+ Utils.getSecondOfMillis(System.currentTimeMillis() - decayTime) + " second(s)");
+                log.trace(name + "'s decayspan of "+ decayspanSeconds + " second(s) is overdue by = "+ Utils.getSecondOfMillis(System.currentTimeMillis() - decayTime) + " millisecond(s)");
                 return true;
             }
-            log.trace(name + "'s lifespan of "+ lifespanSeconds + " second(s) is overdue by = "+ Utils.getSecondOfMillis(System.currentTimeMillis() - dieTime) + " second(s)");
-            potiential.setPotientialVoltage(0D);
+            log.trace(name + "'s lifespan of "+ lifespanSeconds + " second(s) is overdue by = "+ Utils.getSecondOfMillis(System.currentTimeMillis() - dieTime) + " millisecond(s)");
         }
         return false;
     }
@@ -51,7 +50,11 @@ public abstract class Transmitter extends Message {
     public ElectricPotiential getElectricPotiential(){
         return this.potiential;
     }
-    
+
+    public boolean isEmpty() {
+        return this.potiential.isEmpty();
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName();

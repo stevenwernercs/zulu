@@ -12,5 +12,9 @@ import com.trifidearth.zulu.message.Message;
  * @author iSteve
  */
 public class ActionPotiential extends Message {
-    
+
+    @Override
+    public boolean isEmpty() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -5,6 +5,8 @@
  */
 package com.trifidearth.zulu.coordinate;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author iSteve
@@ -26,7 +28,14 @@ public class Coordinate implements Comparable {
         this.y = y; 
         this.z = 0; //TODO use z
     }
-    
+
+    public Coordinate(JSONObject origin) {
+        this.x = origin.getInt("x");
+        this.y = origin.getInt("y");
+        this.z = origin.getInt("z");
+    }
+
+
     public Coordinate(CoordinateBounds bounds) {
         x = (int)(getRandom() * bounds.getRadius());
         y = (int)(getRandom() * bounds.getRadius());
@@ -107,5 +116,12 @@ public class Coordinate implements Comparable {
     public String toString() {
         return "<"+x+","+y+","+z+">";
     }
-    
+
+    public JSONObject toJson() {
+        JSONObject object = new JSONObject();
+        object.put("x", x);
+        object.put("y", y);
+        object.put("z", z);
+        return object;
+    }
 }

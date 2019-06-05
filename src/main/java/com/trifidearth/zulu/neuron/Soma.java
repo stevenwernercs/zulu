@@ -8,6 +8,7 @@ package com.trifidearth.zulu.neuron;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.message.potiential.ElectricPotiential;
 import com.trifidearth.zulu.message.potiential.ActionPotiential;
+import org.json.JSONObject;
 
 /**
  *
@@ -15,7 +16,7 @@ import com.trifidearth.zulu.message.potiential.ActionPotiential;
  */
 public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential> {
 
-    private static final double RESTING_POTIENTIAL = -70D;
+    public static final double RESTING_POTIENTIAL = -70D;
     private static final double THRESHOLD = -55D;
     private static final double DE_POLARIZATION = 40D;
     private static final double HYPERPOLARIZATION = -75D;
@@ -35,8 +36,11 @@ public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential
         ActionPotiential output = null;
         if(potiential.getPotientialVoltage() > THRESHOLD) {
             output = new ActionPotiential();
+            potiential.forcePotientialVoltage(HYPERPOLARIZATION);
+
+        } else {
+            potiential.updatePotientialVoltage((potiential.getPotientialVoltage() + RESTING_POTIENTIAL) / 2);
         }
-        potiential.setPotientialVoltage(RESTING_POTIENTIAL);
         return output;
     }
     

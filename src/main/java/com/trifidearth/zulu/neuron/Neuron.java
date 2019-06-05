@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -26,9 +28,10 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     private static final Logger log = Logger.getLogger(Neuron.class);
     Brain brain;
-    int name;
-    NeuronType type;
-    ConcurrentLinkedQueue<Dendrite> dentrites;
+    public final int name;
+    int storagedEnergy = 0;
+    public final NeuronType type;
+    ConcurrentLinkedQueue<Dendrite> dendrites;
     Soma soma;
     Axon axon;
     ConcurrentLinkedQueue<Synapse> synapses;
@@ -38,32 +41,36 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
         this.brain = brain;
         this.name = name;
         this.type =  type;
+        this.storagedEnergy = 0;
         init(fixedPoint, brain.getBounds());
     }
 
-    @Override
-    public void update() {
-        ElectricPotiential dentritalSum = new ElectricPotiential(0);
-        for(Dendrite each : dentrites) {
-            dentritalSum.absorb(each.propagate(brain.retrieveNearByTransmitters(each.getGrowing())));
+    public Neuron(Brain brain, JSONObject neuronObj) {
+        super(new Coordinate(neuronObj.getJSONObject("soma")));
+        this.brain = brain;
+        this.name = neuronObj.getInt("name");
+        this.type = NeuronType.valueOf(neuronObj.getString("type"));
+        this.soma = new Soma(new CoordinatePair(super.getfixedPoint()), new ElectricPotiential(Soma.RESTING_POTIENTIAL));
+        this.dendrites = new ConcurrentLinkedQueue<>();
+        for(Object obj : neuronObj.getJSONArray("dendrites")) {
+            JSONObject dendriteObj = (JSONObject)obj;
+            Dendrite dendrite = new Dendrite(new Coordinate(dendriteObj));
+            this.dendrites.add(dendrite);
         }
-        ActionPotiential axonIn = soma.propagate(dentritalSum);
-        if(axonIn != null){
-            if(NeuronType.MOTOR.equals(type)) {
-                brain.out.println(String.valueOf(Character.toChars(name)));
-            } else {
-                ActionPotiential axonOut = axon.propagate(axonIn);
-                for (Synapse each : synapses) {
-                    brain.depositTranmitters(each.getGrowing(), each.propagate(axonOut));
-                }
-            }
+        this.axon = new Axon(this.soma.getFixed(), neuronObj.getJSONObject("axon"));
+        this.synapses = new ConcurrentLinkedQueue<>();
+        for(Object obj : neuronObj.getJSONArray("synapses")) {
+            JSONObject synapseObj = (JSONObject)obj;
+            Synapse synapse = new Synapse(new Coordinate(synapseObj), this);
+            this.synapses.add(synapse);
         }
+        bringToLife();
     }
-    
+
     private void init(Coordinate coordinate, CoordinateBounds bounds){
         CoordinatePair point = new CoordinatePair(coordinate);
-        dentrites = new ConcurrentLinkedQueue<>();
-        soma = new Soma(point, new ElectricPotiential(0));
+        dendrites = new ConcurrentLinkedQueue<>();
+        soma = new Soma(point, new ElectricPotiential(Soma.RESTING_POTIENTIAL));
         axon = new Axon(point);
         axon.grow(brain.getBounds());
         synapses = new ConcurrentLinkedQueue<>();
@@ -72,19 +79,54 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     }
 
     @Override
+    public void update() {
+        brain.out.println(this.type.name() + " Neuron " + String.valueOf(Character.toChars(name)) + " @ " + this.soma.potiential);
+        double sum = 0d;
+        for(Dendrite each : dendrites) {
+            sum += each.propagate(brain.retrieveNearByTransmitters(each.getGrowing())).getPotientialVoltage();
+
+        }
+        ElectricPotiential dendritalSum = new ElectricPotiential(sum);
+        ActionPotiential axonIn = soma.propagate(dendritalSum);
+        if(axonIn != null){
+            this.storagedEnergy++;
+            if(NeuronType.MOTOR.equals(type)) {
+                brain.out.println("##########FIRE###########: " + String.valueOf(Character.toChars(name)));
+            } else {
+                brain.out.println("#PROPAGATE#: " + String.valueOf(Character.toChars(name)));
+                ActionPotiential axonOut = axon.propagate(axonIn);
+                for (Synapse each : synapses) {
+                    brain.depositTransmitters(each.getGrowing(), each.propagate(axonOut));
+                }
+            }
+        }
+    }
+
+    @Override
     public void grow(CoordinateBounds bounds) {
-        if(Math.random() < (1D/(dentrites.size()+1D))) {
-            dentrites.add(new Dendrite(soma.getFixed()));
+        if (canGrow()) {
+            storagedEnergy -= 1;
+            if(!type.equals(NeuronType.SENSORY)) {
+                if(Math.random() < (1D/(dendrites.size()+1D))) {
+                    dendrites.add(new Dendrite(soma.getFixed()));
+                }
+                for(Dendrite each : dendrites) {
+                    each.grow(bounds);
+                }
+            }
+            if(!type.equals(NeuronType.MOTOR)) {
+                if (Math.random() < (1D / (synapses.size() + 1D))) {
+                    synapses.add(new Synapse(axon.getGrowing(), this));
+                }
+                for (Synapse each : synapses) {
+                    each.grow(bounds);
+                }
+            }
         }
-        for(Dendrite each : dentrites) {
-            each.grow(bounds);
-        }
-        if(Math.random() < (1D/(synapses.size()+1D))) {
-            synapses.add(new Synapse(axon.getGrowing(), this));
-        }
-        for(Synapse each : synapses) {
-            each.grow(bounds);
-        }
+    }
+
+    private boolean canGrow() {
+        return storagedEnergy > (this.dendrites.size() + this.synapses.size());
     }
 
     public Map<Coordinate,List<String>> getNodeLocationMap() {
@@ -92,13 +134,17 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
         Map map2 = new HashMap();
         appendAtLocation(map, soma.getfixedPoint(), name+"_N");
         appendAtLocation(map, axon.getGrowing(), name+"_A");
-        for(Dendrite d : dentrites) {
+        for(Dendrite d : dendrites) {
             appendAtLocation(map, d.getGrowing(), name+"_D");    
         }
         for(Synapse s : synapses) {
             appendAtLocation(map, s.getGrowing(), name+"_S");    
         }
         return map;
+    }
+
+    public void stimulate(double mv) {
+        this.soma.potiential.absorb(mv);
     }
     
     private static Map<Coordinate,List<String>> appendAtLocation(Map<Coordinate,List<String>> map,
@@ -115,14 +161,14 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     @Override
     public String toString() {
-        return "Neuron{" + "name=" + name + ", type=" + type + ", dendrites@" + dentrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
+        return "Neuron{" + "name=" + name + ", type=" + type + ", potiential=" + soma.potiential + ", energy= " + storagedEnergy + ", dendrites@" + dendrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
     }
 
     @Override
     public void run() {
         while(this.isAlive()) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException ex) {
                 log.warn("InterruptedException", ex);
             }
@@ -130,5 +176,30 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
             update();
         }
     }
-    
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject neuron = new JSONObject();
+
+        neuron.put("type", this.type.name());
+        neuron.put("name", this.name);
+
+        neuron.put("soma", this.soma.toJson());
+
+        JSONArray dendrites = new JSONArray();
+        for(Dendrite dendrite : this.dendrites) {
+            dendrites.put(dendrite.toJson());
+        }
+        neuron.put("dendrites", dendrites);
+
+        neuron.put("axon", this.axon.toJson());
+
+        JSONArray synapses = new JSONArray();
+        for(Synapse synapse : this.synapses) {
+            synapses.put(synapse.toJson());
+        }
+        neuron.put("synapses", synapses);
+
+        return neuron;
+    }
 }

@@ -10,5 +10,6 @@ package com.trifidearth.zulu.message;
  * @author iSteve
  */
 public abstract class Message {
-    
+
+    public abstract boolean isEmpty();
 }

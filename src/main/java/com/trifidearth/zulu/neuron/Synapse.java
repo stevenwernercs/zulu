@@ -10,6 +10,7 @@ import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.message.potiential.ActionPotiential;
 import com.trifidearth.zulu.message.transmitter.Transmitters;
+import org.json.JSONObject;
 
 /**
  *
@@ -25,10 +26,6 @@ public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> i
         this.neuron = neuron;
     }
     
-    public Synapse(CoordinatePair coordinatePair) {
-        super(coordinatePair);
-    }
-
     @Override
     public Transmitters propagate(ActionPotiential input) {
         if(input!=null){

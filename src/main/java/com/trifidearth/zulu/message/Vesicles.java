@@ -10,5 +10,9 @@ package com.trifidearth.zulu.message;
  * @author iSteve
  */
 public class Vesicles extends Message {
-    
+
+    @Override
+    public boolean isEmpty() {
+        throw new UnsupportedOperationException();
+    }
 }
