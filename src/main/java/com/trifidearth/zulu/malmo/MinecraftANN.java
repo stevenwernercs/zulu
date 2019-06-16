@@ -32,10 +32,14 @@ import com.trifidearth.zulu.utils.Utils;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
+import org.apache.log4j.Logger;
 import java.util.concurrent.atomic.DoubleAccumulator;
 
 public class MinecraftANN
 {
+
+    private static final Logger log = Logger.getLogger(JavaExamples_run_mission.class);
+
     static
     {
         System.loadLibrary("MalmoJava"); // attempts to load MalmoJava.dll (on Windows) or libMalmoJava.so (on Linux)
@@ -59,13 +63,13 @@ public class MinecraftANN
         }
         if( agent_host.receivedArgument("help") )
         {
-            System.out.println( agent_host.getUsage() );
+            log.debug( agent_host.getUsage() );
             System.exit(0);
         }
 
         File missionXMLFile =  new File("/home/swerner/projects/zulu/malmo/levels/lvl1-Breakfast.xml");
         String missionXML = Utils.readFile(missionXMLFile);
-        System.out.println(missionXML);
+        log.debug(missionXML);
 
         //MissionSpec my_mission = new MissionSpec();
         MissionSpec my_mission = new MissionSpec(missionXML, true);
@@ -79,7 +83,7 @@ public class MinecraftANN
         my_mission_record.recordRewards();
         my_mission_record.recordObservations();
 
-        System.out.println(my_mission.getAsXML(true));
+        log.debug(my_mission.getAsXML(true));
 
         //my_mission.allowAllAbsoluteMovementCommands();
         my_mission.allowAllChatCommands();
@@ -87,15 +91,15 @@ public class MinecraftANN
         //my_mission.allowAllDiscreteMovementCommands();
         my_mission.allowAllInventoryCommands();
 
-        System.out.println("Commands for role " + 0);
+        log.debug("Commands for role " + 0);
         StringVector commandHandlers = my_mission.getListOfCommandHandlers(0);
         for(int i = 0; i < commandHandlers.size(); i++) {
             String commandHandler = commandHandlers.get(i);
             StringVector allowedCommands = my_mission.getAllowedCommands(0, commandHandler);
-            System.out.println("\tCommands for Handler " + commandHandler + ":");
+            log.debug("\tCommands for Handler " + commandHandler + ":");
             for(int j = 0; j < allowedCommands.size(); j++) {
                 String command = allowedCommands.get(j);
-                System.out.println("\t\t" + command);
+                log.debug("\t\t" + command);
             }
         }
 
@@ -133,12 +137,12 @@ public class MinecraftANN
             for( int i = 0; i < world_state.getErrors().size(); i++ )
                 System.err.println( "Error: " + world_state.getErrors().get(i).getText() );
         } while( !world_state.getIsMissionRunning() );
-        System.out.println( "" );
+        log.debug( "" );
 
         //Setup more level configs
         agent_host.sendCommand( "chat /effect @p minecraft:hunger 5 255");
         agent_host.sendCommand( "chat /effect @p minecraft:instant_damage 1 1");
-        System.out.println("Bringing random based brain online... in 8 seconds...");
+        log.debug("Bringing random based brain online... in 8 seconds...");
         Thread.sleep(8000);
 
         Map<MalmoUtils.OBSERVATION,String> observations = new TreeMap<>();
@@ -165,24 +169,24 @@ public class MinecraftANN
 
             world_state = agent_host.getWorldState();
             TimestampedVideoFrameVector timestampedVideoFrameVector = world_state.getVideoFrames();
-            System.out.println("Printing " + timestampedVideoFrameVector.size() + " VideoFrames:");
+            log.debug("Printing " + timestampedVideoFrameVector.size() + " VideoFrames:");
             for( int i = 0; i < timestampedVideoFrameVector.size(); i++ ) {
                 TimestampedVideoFrame videoFrame = timestampedVideoFrameVector.get(i);
                 ByteVector pixels = videoFrame.getPixels();
-                System.out.println("\tVideoFrame " + i + " @ " + videoFrame.getHeight() + "x" + videoFrame.getWidth() + ": " + pixels);
+                log.debug("\tVideoFrame " + i + " @ " + videoFrame.getHeight() + "x" + videoFrame.getWidth() + ": " + pixels);
             }
 
             TimestampedStringVector timestampedStringVector = world_state.getObservations();
-            System.out.println("Printing " + timestampedStringVector.size() + " Observation sets:");
+            log.debug("Printing " + timestampedStringVector.size() + " Observation sets:");
 
             for( int i = 0; i < timestampedStringVector.size(); i++ ) {
                 TimestampedString observationTimestampedString = timestampedStringVector.get(i);
                 String observationJson = observationTimestampedString.getText();
-                System.out.println(observationJson);
+                log.debug(observationJson);
                 observations.putAll(MalmoUtils.pasrseObservationJson(observationJson));
-                System.out.println("\tObservation set " + i + " with " + observations.size() + " Observations:");
+                log.debug("\tObservation set " + i + " with " + observations.size() + " Observations:");
                 for(Map.Entry<MalmoUtils.OBSERVATION,String> observation : observations.entrySet()) {
-                    System.out.println("\t\tObservation set " + i + ": " + observation.getKey().name() + "\t: " + observation.getValue());
+                    log.debug("\t\tObservation set " + i + ": " + observation.getKey().name() + "\t: " + observation.getValue());
                 }
 
             }
@@ -190,13 +194,13 @@ public class MinecraftANN
             System.out.print( "video,observations,rewards received: " );
             System.out.print( world_state.getNumberOfVideoFramesSinceLastState() + "," );
             System.out.print( world_state.getNumberOfObservationsSinceLastState() + "," );
-            System.out.println( world_state.getNumberOfRewardsSinceLastState() );
+            log.debug( world_state.getNumberOfRewardsSinceLastState() );
 
             MalmoUtils.randomBehavior(observations, agent_host);
 
             for( int i = 0; i < world_state.getRewards().size(); i++ ) {
                 TimestampedReward reward = world_state.getRewards().get(i);
-                System.out.println( "Summed reward: " + reward.getValue() );
+                log.debug( "Summed reward: " + reward.getValue() );
             }
 
             for( int i = 0; i < world_state.getErrors().size(); i++ ) {
@@ -205,6 +209,6 @@ public class MinecraftANN
             }
         } while( world_state.getIsMissionRunning() );
 
-        System.out.println( "Mission has stopped." );
+        log.debug( "Mission has stopped." );
     }
 }

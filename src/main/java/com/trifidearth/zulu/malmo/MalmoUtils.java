@@ -9,9 +9,13 @@ import java.util.Map;
 import java.util.TreeMap;
 //import javax.json.*;
 //import java.io.StringReader;
+import org.apache.log4j.Logger;
 
 
 public class MalmoUtils {
+
+	private static final Logger log = Logger.getLogger(MalmoUtils.class);
+
     public enum CONTINUOUS_MOVEMENT_COMMAND {
 
         move, strafe, pitch, turn;
@@ -34,7 +38,7 @@ public class MalmoUtils {
                 throw new IllegalArgumentException("Value must be within range: [" + lowerbound + ", " + upperbound + "]");
             }
             String command = name() + " " + df.format(value);
-            System.out.println(command);
+            log.debug(command);
             return command;
         }
 
@@ -46,7 +50,7 @@ public class MalmoUtils {
 
         public String get(boolean value) {
             String command = name() + " " + (value ? 1 : 0);
-            System.out.println(command);
+            log.debug(command);
             return command;
         }
 
@@ -266,7 +270,7 @@ public class MalmoUtils {
         try {
             key = OBSERVATION.valueOf(keyString);
         } catch (IllegalArgumentException ex) {
-            System.out.println("UNKNOWN OBSERVATION: " + keyString);
+            log.debug("UNKNOWN OBSERVATION: " + keyString);
             //key= OBSERVATION.placeholder;
             throw new RuntimeException("UNKNOWN OBSERVATION: " + keyString, ex);
         }

@@ -19,6 +19,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import render.sound.SoundUtils;
+
+import javax.sound.sampled.LineUnavailableException;
 
 /**
  *
@@ -69,31 +72,42 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     private void init(Coordinate coordinate, CoordinateBounds bounds){
         CoordinatePair point = new CoordinatePair(coordinate);
-        dendrites = new ConcurrentLinkedQueue<>();
         soma = new Soma(point, new ElectricPotiential(Soma.RESTING_POTIENTIAL));
+        dendrites = new ConcurrentLinkedQueue<>();
+        if(!type.equals(NeuronType.SENSORY)) {
+            dendrites.add(new Dendrite(soma.getFixed()));
+        }
         axon = new Axon(point);
         axon.grow(brain.getBounds());
         synapses = new ConcurrentLinkedQueue<>();
+        if(!type.equals(NeuronType.MOTOR)) {
+            synapses.add(new Synapse(axon.getGrowing(), this));
+        }
         grow(bounds);
         bringToLife();
     }
 
     @Override
     public void update() {
-        brain.out.println(this.type.name() + " Neuron " + String.valueOf(Character.toChars(name)) + " @ " + this.soma.potiential);
+        log.trace(this.type.name() + " Neuron " + String.valueOf(Character.toChars(name)) + " @ " + this.soma.potiential);
         double sum = 0d;
         for(Dendrite each : dendrites) {
             sum += each.propagate(brain.retrieveNearByTransmitters(each.getGrowing())).getPotientialVoltage();
-
         }
         ElectricPotiential dendritalSum = new ElectricPotiential(sum);
+        log.trace(this.type.name() + " pulled in " + dendritalSum);
         ActionPotiential axonIn = soma.propagate(dendritalSum);
         if(axonIn != null){
+            try {
+                SoundUtils.play_tone(this.name * 100, 500, type.equals(NeuronType.SENSORY) ? 0.1 : 1.0);
+            } catch (LineUnavailableException e) {
+                e.printStackTrace();
+            }
             this.storagedEnergy++;
             if(NeuronType.MOTOR.equals(type)) {
-                brain.out.println("##########FIRE###########: " + String.valueOf(Character.toChars(name)));
+                log.info("##########FIRE###########: " + String.valueOf(Character.toChars(name)));
             } else {
-                brain.out.println("#PROPAGATE#: " + String.valueOf(Character.toChars(name)));
+                log.info("#PROPAGATE#: " + type.name() + ": " + String.valueOf(Character.toChars(name)));
                 ActionPotiential axonOut = axon.propagate(axonIn);
                 for (Synapse each : synapses) {
                     brain.depositTransmitters(each.getGrowing(), each.propagate(axonOut));
@@ -201,5 +215,13 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
         neuron.put("synapses", synapses);
 
         return neuron;
+    }
+
+    public int synapseCount() {
+        return this.synapses.size();
+    }
+
+    public int dendriteCount() {
+        return this.dendrites.size();
     }
 }

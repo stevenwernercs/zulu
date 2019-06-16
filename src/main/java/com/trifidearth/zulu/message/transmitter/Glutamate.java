@@ -12,6 +12,6 @@ package com.trifidearth.zulu.message.transmitter;
 public class Glutamate extends Transmitter{
     
     public Glutamate() {
-        super("Glutamate", 5D, 20, 60);
+        super("Glutamate", 50D, 3, 60);
     }
 }

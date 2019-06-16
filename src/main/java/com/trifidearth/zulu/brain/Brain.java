@@ -46,7 +46,7 @@ public class Brain {
             this.neurons.add(sensor);
             this.sensors.put(String.valueOf(Character.toChars(i)), sensor);
         }
-        for (int i = 0; i < relay; i++) {
+        for (int i = '0'; i < relay + '0'; i++) {
             Neuron inter = new Neuron(this, i, NeuronType.INTER_NEURON, new Coordinate(bounds));
             log.trace("Created new Neuron: " + inter);
             this.neurons.add(inter);
@@ -94,7 +94,7 @@ public class Brain {
             neuron.grow(bounds);
         }
     }
-    
+
     public Transmitters pollNearByTransmitters(Coordinate coordinate) {
         Transmitters transmitters = cerebralFluid.get(coordinate);
         if (transmitters == null){
@@ -114,7 +114,7 @@ public class Brain {
      * @return null or list containing 0 or more transmitters
      */
     public Transmitters retrieveNearByTransmitters(Coordinate coordinate) {
-        Transmitters transmitters = cerebralFluid.remove(coordinate);
+        Transmitters transmitters = cerebralFluid.remove(coordinate); //remove %
         if (transmitters == null){
             transmitters = new Transmitters();
         } else {
@@ -122,7 +122,7 @@ public class Brain {
         }
         if(!transmitters.getTransmitters().isEmpty()) {
             log.trace(transmitters + " relayed!");
-            out.print("t"+transmitters.getTransmitters().size()+">");
+            log.info("t"+transmitters.getTransmitters().size()+">");
         }
         return transmitters;
     }
@@ -226,8 +226,8 @@ public class Brain {
         String output = "brain.json";
         if(args.length == 0) {
             Coordinate orgin = new Coordinate(0, 0, 0);
-            CoordinateBounds bounds = new CoordinateBounds(orgin, 5);
-            brain = new Brain(bounds, 1, 0, 1);
+            CoordinateBounds bounds = new CoordinateBounds(orgin, 2);
+            brain = new Brain(bounds, 5, 10, 26);
         } else {
             brain = new Brain(new File(args[0]));
             output = args[0] + "_new";
@@ -238,14 +238,19 @@ public class Brain {
         log.info("Initial Brain State:"+System.lineSeparator()+brain.toString());
         int iteration = 0;
         brain.start();
+        int stim = 0;
             while(true) {
+                int i = 0;
                 for(Neuron sensor : brain.sensors.values()) {
-                    sensor.stimulate(30d);
+                    if(i++ == stim) {
+                        sensor.stimulate(30d);
+                        break;
+                    }
                 }
+                stim = (stim + 1) % brain.sensors.size();
                 Thread.sleep(5000);
-                //brain.serialize(new File(output));
                 brain.grow();
-                brain.viceralCleansing();
+                brain.visceralCleansing();
                 log.info("Brain State " + iteration + System.lineSeparator() + brain.toString());
                 log.info(brain.getPlot());
                 iteration++;
@@ -268,7 +273,7 @@ public class Brain {
         return sb.toString();
     }
 
-    public void viceralCleansing() {
+    public void visceralCleansing() {
         Set<Coordinate> remove = new HashSet<>();
         int count = 0;
         int dead = 0;
@@ -286,5 +291,34 @@ public class Brain {
         for(Coordinate coordinate : remove) {
             cerebralFluid.remove(coordinate);
         }
+    }
+
+    public String info() {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        int r = 0;
+        int o = 0;
+
+        int s = 0;
+        int d = 0;
+        for(Neuron neuron : neurons) {
+            switch (neuron.type) {
+                case SENSORY: i++; break;
+                case INTER_NEURON: r++; break;
+                case MOTOR: o++; break;
+            }
+            s+=neuron.synapseCount();
+            d+=neuron.dendriteCount();
+        }
+
+        sb.append("n-").append(neurons.size())
+          .append("_s-").append(s)
+          .append("_d-").append(d)
+          .append("_i-").append(i)
+          .append("_r-").append(r)
+          .append("_o-").append(o)
+          .append("_b-").append(bounds.info());
+
+        return sb.toString();
     }
 }

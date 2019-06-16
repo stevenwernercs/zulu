@@ -47,4 +47,8 @@ public class CoordinateBounds {
         object.put("origin", origin.toJson());
         return object;
     }
+
+    public String info() {
+        return "x-"+origin.getX()+"_y-"+origin.getY()+"_z-"+origin.getZ()+"_r-"+getRadius();
+    }
 }

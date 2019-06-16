@@ -25,21 +25,25 @@ public class Transmitters extends Message {
     
     private final ConcurrentLinkedQueue<Transmitter> transmitterList = new ConcurrentLinkedQueue<>();
     private static final List<Transmitter> AVAILABLE_TRANSMITTERS = new ArrayList<>(Arrays.asList(
-        new Acetlylcholine(),
-        new Adrenaline(),
-        new Dopamine(),
-        new Endorphins(),
-        new Gaba(),
-        new Glutamate(),
-        new Noradrenaline(),
-        new Serotonin()
+        //new Acetlylcholine(),
+        //new Adrenaline(),
+        //new Dopamine(),
+        //new Endorphins(),
+        //new Gaba(),
+        new Glutamate()
+        //new Noradrenaline(),
+        //new Serotonin()
     ));
    
     public static Transmitters getRandomTransmitters() {
         Transmitters t = new Transmitters();
-        for (int i = (int)(Math.random() * AVAILABLE_TRANSMITTERS.size()); i >= 0; i--){
-            t.getTransmitters().add(AVAILABLE_TRANSMITTERS.get((int)(Math.random()* AVAILABLE_TRANSMITTERS.size())));
-        }
+        //for (int i = (int)(Math.random() * AVAILABLE_TRANSMITTERS.size()); i >= 0; i--){
+        //    t.getTransmitters().add(AVAILABLE_TRANSMITTERS.get((int)(Math.random()* AVAILABLE_TRANSMITTERS.size())));
+        //}
+        t.getTransmitters().add(new Glutamate());
+        t.getTransmitters().add(new Glutamate());
+        t.getTransmitters().add(new Glutamate());
+        t.getTransmitters().add(new Glutamate());
         return t;
     }
 
@@ -101,5 +105,6 @@ public class Transmitters extends Message {
             }
         }
         return ret;
-    }    
+    }
+
 }

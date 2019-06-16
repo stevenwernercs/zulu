@@ -27,9 +27,12 @@ package com.trifidearth.zulu.malmo;
 //                                               java -cp MalmoJavaJar.jar;JavaExamples_run_mission.jar -Djava.library.path=. JavaExamples_run_mission (on Windows)
 
 import com.microsoft.msr.malmo.*;
+import org.apache.log4j.Logger;
 
 public class JavaExamples_run_mission
 {
+    private static final Logger log = Logger.getLogger(JavaExamples_run_mission.class);
+
     static
     {
         System.loadLibrary("MalmoJava"); // attempts to load MalmoJava.dll (on Windows) or libMalmoJava.so (on Linux)
@@ -54,7 +57,7 @@ public class JavaExamples_run_mission
         }
         if( agent_host.receivedArgument("help") )
         {
-            System.out.println( agent_host.getUsage() );
+            log.debug( agent_host.getUsage() );
             System.exit(0);
         }
 
@@ -99,7 +102,7 @@ public class JavaExamples_run_mission
             for( int i = 0; i < world_state.getErrors().size(); i++ )
                 System.err.println( "Error: " + world_state.getErrors().get(i).getText() );
         } while( !world_state.getIsMissionRunning() );
-        System.out.println( "" );
+        log.debug( "" );
 
         // main loop:
         do {
@@ -115,10 +118,10 @@ public class JavaExamples_run_mission
             System.out.print( "video,observations,rewards received: " );
             System.out.print( world_state.getNumberOfVideoFramesSinceLastState() + "," );
             System.out.print( world_state.getNumberOfObservationsSinceLastState() + "," );
-            System.out.println( world_state.getNumberOfRewardsSinceLastState() );
+            log.debug( world_state.getNumberOfRewardsSinceLastState() );
             for( int i = 0; i < world_state.getRewards().size(); i++ ) {
                 TimestampedReward reward = world_state.getRewards().get(i);
-                System.out.println( "Summed reward: " + reward.getValue() );
+                log.debug( "Summed reward: " + reward.getValue() );
             }
             for( int i = 0; i < world_state.getErrors().size(); i++ ) {
                 TimestampedString error = world_state.getErrors().get(i);
@@ -126,6 +129,6 @@ public class JavaExamples_run_mission
             }
         } while( world_state.getIsMissionRunning() );
 
-        System.out.println( "Mission has stopped." );
+        log.debug( "Mission has stopped." );
     }
 }

@@ -12,6 +12,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -20,11 +21,13 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class Render {
 
+	private static final Logger log = Logger.getLogger(Render.class);
+
 	// The window handle
 	private long window;
 
 	public void run() {
-		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+		log.debug("Hello LWJGL " + Version.getVersion() + "!");
 
 		init();
 		loop();

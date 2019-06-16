@@ -40,9 +40,7 @@ public class ElectricPotiential extends Message{
     }
 
     public synchronized void updatePotientialVoltage(double potientialVoltage) {
-        //System.out.println(this.potientialVoltage + "<<<<" + potientialVoltage);
         this.potientialVoltage = (this.potientialVoltage + (4d*potientialVoltage)) / 5d;
-        //System.out.println(this.potientialVoltage);
     }
 
     public boolean isEmpty() {
