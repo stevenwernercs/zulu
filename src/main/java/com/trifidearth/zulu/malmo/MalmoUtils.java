@@ -198,6 +198,17 @@ public class MalmoUtils {
 		currentItemIndex,
 		inventoriesAvailable,
 
+		//InventorySlot Variants
+		InventorySlot_0_variant,
+		InventorySlot_1_variant,
+		InventorySlot_2_variant,
+		InventorySlot_3_variant,
+		InventorySlot_4_variant,
+		InventorySlot_5_variant,
+		InventorySlot_6_variant,
+		InventorySlot_7_variant,
+		InventorySlot_8_variant,
+
 		//Hotbar Variants
 		Hotbar_0_variant,
 		Hotbar_1_variant,
