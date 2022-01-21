@@ -35,7 +35,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     int storagedEnergy = 0;
     public final NeuronType type;
     ConcurrentLinkedQueue<Dendrite> dendrites;
-    Soma soma;
+    private Soma soma;
     Axon axon;
     ConcurrentLinkedQueue<Synapse> synapses;
 
@@ -70,6 +70,10 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
         bringToLife();
     }
 
+    public Soma getSoma() {
+        return soma;
+    }
+
     private void init(Coordinate coordinate, CoordinateBounds bounds){
         CoordinatePair point = new CoordinatePair(coordinate);
         soma = new Soma(point, new ElectricPotiential(Soma.RESTING_POTIENTIAL));
@@ -89,7 +93,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     @Override
     public void update() {
-        log.trace(this.type.name() + " Neuron " + String.valueOf(Character.toChars(name)) + " @ " + this.soma.potiential);
+        log.trace(this.type.name() + " Neuron " + String.valueOf(Character.toChars(name)) + " @ " + this.soma.getPotiential());
         double sum = 0d;
         for(Dendrite each : dendrites) {
             sum += each.propagate(brain.retrieveNearByTransmitters(each.getGrowing())).getPotientialVoltage();
@@ -158,7 +162,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     }
 
     public void stimulate(double mv) {
-        this.soma.potiential.absorb(mv);
+        this.soma.getPotiential().absorb(mv);
     }
     
     private static Map<Coordinate,List<String>> appendAtLocation(Map<Coordinate,List<String>> map,
@@ -175,14 +179,14 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     @Override
     public String toString() {
-        return "Neuron{" + "name=" + name + ", type=" + type + ", potiential=" + soma.potiential + ", energy= " + storagedEnergy + ", dendrites@" + dendrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
+        return "Neuron{" + "name=" + name + ", type=" + type + ", potiential=" + soma.getPotiential() + ", energy= " + storagedEnergy + ", dendrites@" + dendrites.size() + ", axon@" + axon.distance + ", synapses@" + synapses.size() + '}';
     }
 
     @Override
     public void run() {
         while(this.isAlive()) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 log.warn("InterruptedException", ex);
             }

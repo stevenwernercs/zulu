@@ -12,6 +12,13 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
     <orderEntry type="library" name="Maven: com.microsoft.msr.malmo:MalmoJavaJar:0.0.1-local" level="project" />
+    <orderEntry type="library" name="Maven: org.knowm.xchart:xchart:3.8.1" level="project" />
+    <orderEntry type="library" name="Maven: de.erichseifert.vectorgraphics2d:VectorGraphics2D:0.13" level="project" />
+    <orderEntry type="library" name="Maven: de.rototor.pdfbox:graphics2d:0.32" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:2.0.24" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:fontbox:2.0.24" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
+    <orderEntry type="library" name="Maven: com.madgag:animated-gif-lib:1.4" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20180813" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-assimp:3.1.1" level="project" />

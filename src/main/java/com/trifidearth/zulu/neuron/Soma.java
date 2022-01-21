@@ -20,7 +20,7 @@ public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential
     private static final double THRESHOLD = -55D;
     private static final double DE_POLARIZATION = 40D;
     private static final double HYPERPOLARIZATION = -75D;
-    ElectricPotiential potiential = new ElectricPotiential(RESTING_POTIENTIAL);
+    private ElectricPotiential potiential = new ElectricPotiential(RESTING_POTIENTIAL);
     
     public Soma(CoordinatePair coordinatePair) {
         super(coordinatePair);
@@ -30,7 +30,11 @@ public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential
         super(coordinatePair);
         this.potiential = potiential;
     }
-    
+
+    public ElectricPotiential getPotiential() {
+        return potiential;
+    }
+
     //buffer to collect and propagate action potentials
     ActionPotiential summation() {
         ActionPotiential output = null;

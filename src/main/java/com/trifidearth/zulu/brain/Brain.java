@@ -27,12 +27,12 @@ import org.json.JSONObject;
 public class Brain {
     
     private static final Logger log = Logger.getLogger(Brain.class);
-    Collection<Neuron> neurons;
-    Map<String, Neuron> sensors;
-    CoordinateBounds bounds;
+    private Collection<Neuron> neurons;
+    private Map<String, Neuron> sensors;
+    private CoordinateBounds bounds;
     private int transmitterCount;
     private int deadTransmitterCount;
-    ConcurrentSkipListMap<Coordinate, Transmitters> cerebralFluid = new ConcurrentSkipListMap<>();
+    private ConcurrentSkipListMap<Coordinate, Transmitters> cerebralFluid = new ConcurrentSkipListMap<>();
     public PrintStream out;
     
     public Brain(CoordinateBounds bounds, int inputs, int relay, int outputs) throws UnsupportedEncodingException {
@@ -75,6 +75,10 @@ public class Brain {
            }
            this.neurons.add(neuron);
         }
+    }
+
+    public Collection<Neuron> getNeurons() {
+        return neurons;
     }
 
     public CoordinateBounds getBounds() {
@@ -224,7 +228,7 @@ public class Brain {
 
         Brain brain;
         String output = "brain.json";
-        if(args.length == 0) {
+        if (args.length == 0) {
             Coordinate orgin = new Coordinate(0, 0, 0);
             CoordinateBounds bounds = new CoordinateBounds(orgin, 2);
             brain = new Brain(bounds, 5, 10, 26);
@@ -232,6 +236,10 @@ public class Brain {
             brain = new Brain(new File(args[0]));
             output = args[0] + "_new";
         }
+        runBrain(brain);
+    }
+
+    public static void runBrain(Brain brain) throws InterruptedException {
         KeyboardEnvironment env = new KeyboardEnvironment(brain);
         Thread envT = new Thread(env);
         envT.start();
