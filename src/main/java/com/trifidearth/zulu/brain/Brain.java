@@ -40,20 +40,20 @@ public class Brain {
         out = System.out;
         this.bounds = bounds;
         this.neurons = new ArrayList<>();
-        System.out.println("Brain: constructing with inputs="+inputs+", relay="+relay+", outputs="+outputs+", bounds="+bounds+");
+        System.out.printf("Brain: constructing inputs=%d relay=%d outputs=%d bounds=%s%n", inputs, relay, outputs, bounds);
         System.out.flush();
         for (int i = 'a'; i < inputs + 'a'; i++) {
-            System.out.println("Brain: creating sensory neuron '" + (char)i + "'..."); System.out.flush();
+            System.out.println("Brain: creating sensory neuron " + Character.toString((char)i)); System.out.flush();
             Neuron sensor = new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds), 1, 5);
             this.neurons.add(sensor);
         }
         for (int i = 0; i < relay; i++) {
-            System.out.println("Brain: creating inter neuron #" + i + "..."); System.out.flush();
+            System.out.println("Brain: creating inter neuron #" + i); System.out.flush();
             Neuron inter = new Neuron(this, i, NeuronType.INTER_NEURON, new Coordinate(bounds), 5, 5);
             this.neurons.add(inter);
         }
         for (int i = 'A'; i < outputs + 'A'; i++) {
-            System.out.println("Brain: creating motor neuron '" + (char)i + "'..."); System.out.flush();
+            System.out.println("Brain: creating motor neuron " + Character.toString((char)i)); System.out.flush();
             Neuron motor = new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds), 5, 1);
             this.neurons.add(motor);
         }

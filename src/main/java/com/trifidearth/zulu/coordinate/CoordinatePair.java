@@ -56,12 +56,22 @@ public class CoordinatePair {
     
     public void growRandom(double growDistance, CoordinateBounds bounds) {
         Coordinate growPoint;
+        int attempts = 0;
         do {
-            growPoint = calculate(fixed, 
-                getDistance()+(Math.random() * growDistance), 
-                getThetaXY()+ (Math.random() * 360), 
-                getThetaXZ()+ (Math.random() * 360));
+            growPoint = calculate(fixed,
+                    getDistance() + (Math.random() * growDistance),
+                    getThetaXY() + (Math.random() * 360),
+                    getThetaXZ() + (Math.random() * 360));
+            attempts++;
+            if (attempts > 500) break;
         } while (bounds.outOf(growPoint));
+        if (bounds.outOf(growPoint)) {
+            // Fallback: random point within bounds relative to bounds origin
+            growPoint = calculate(bounds.getOrigin(),
+                    Math.random() * bounds.getRadius(),
+                    Math.random() * 360,
+                    Math.random() * 360);
+        }
         growing = growPoint;
     }
 

@@ -23,6 +23,10 @@ public class CoordinateBounds {
         return radius;
     }
 
+    public Coordinate getOrigin() {
+        return origin;
+    }
+
     @Override
     public String toString() {
         return "CoordinateBounds{" + "origin=" + origin + ", radius=" + radius + '}';
