@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Sat Aug 30 22:55:59 CDT 2025
+lwjgl-opengles-3.1.1.pom>central=
+lwjgl-opengles-3.1.1.jar>central=
+lwjgl-opengles-3.1.1-natives-linux.jar>central=
