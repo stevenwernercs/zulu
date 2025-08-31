@@ -177,14 +177,17 @@ public class FxVisualizerApp extends Application {
     }
 
     private void openLogWindow() {
-        FxLogWindow log = new FxLogWindow();
-        log.show();
-        PrintStream ps = new PrintStream(log.asOutputStream(), true);
-        // Mirror brain.out and System.out
-        brain.out = ps;
-        System.setOut(ps);
-        System.setErr(ps);
-        ps.println("JavaFX Brain Console started.");
+        // Optional GUI Brain Console when -Dgui.log=true
+        if (Boolean.getBoolean("gui.log")) {
+            FxLogWindow log = new FxLogWindow();
+            log.show();
+            PrintStream ps = new PrintStream(log.asOutputStream(), true);
+            brain.out = ps;
+            ps.println("JavaFX Brain Console started.");
+        } else {
+            brain.out = System.out;
+            System.out.println("JavaFX renderer started (logging to terminal).");
+        }
     }
 
     public static void main(String[] args) {

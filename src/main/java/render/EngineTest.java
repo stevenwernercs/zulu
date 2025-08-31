@@ -16,21 +16,21 @@ public class EngineTest {
     
     
     public static void main(String [] args) {
-        // Default: Swing 2D renderer (most compatible)
+        System.out.println("EngineTest: starting Swing 2D visualizer...");
         try {
-            javax.swing.SwingUtilities.invokeLater(new SwingVisualizer());
+            new SwingVisualizer().run();
             return;
         } catch (Throwable t) {
-            // fallback to JavaFX if Swing fails (unlikely)
+            t.printStackTrace(System.out);
+            System.out.println("Swing failed; attempting JavaFX 3D...");
         }
-        // JavaFX renderer
         try {
             FxVisualizerApp.main(args);
             return;
         } catch (Throwable t) {
-            // ignore, try LWJGL last
+            t.printStackTrace(System.out);
+            System.out.println("JavaFX failed; attempting LWJGL 3D...");
         }
-        // LWJGL visualizer remains available for future fixes
         new Visualizer3D().run();
     }
     

@@ -20,12 +20,14 @@ public class SwingVisualizer implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("SwingVisualizer: initializing UI and Brain...");
         frame = new JFrame("Zulu Swing 2D Visualizer");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         bounds = new CoordinateBounds(new Coordinate(0,0,0), 60);
         try {
             brain = new Brain(bounds, 6, 24, 6);
             brain.start();
+            System.out.println("SwingVisualizer: brain started with bounds="+bounds+".");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -37,6 +39,7 @@ public class SwingVisualizer implements Runnable {
 
         // repaint at ~30 FPS
         new Timer(33, e -> view.repaint()).start();
+        System.out.println("SwingVisualizer: UI visible. Use mouse wheel to zoom, drag to pan, 'R' to reset.");
     }
 
     class View extends JPanel {
@@ -117,4 +120,3 @@ public class SwingVisualizer implements Runnable {
         }
     }
 }
-
