@@ -13,9 +13,7 @@ public class EngineTest {
     
     
     public static void main(String [] args) {
-     
-        new Render().run();
-        
+        new Visualizer3D().run();
     }
     
     
