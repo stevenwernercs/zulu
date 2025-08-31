@@ -5,6 +5,8 @@
  */
 package render;
 
+import render.fx.FxVisualizerApp;
+
 /**
  *
  * @author swerner
@@ -13,7 +15,10 @@ public class EngineTest {
     
     
     public static void main(String [] args) {
-        new Visualizer3D().run();
+        // Default: JavaFX renderer for broader OS compatibility
+        FxVisualizerApp.main(args);
+        // LWJGL visualizer remains available for future fixes:
+        // new Visualizer3D().run();
     }
     
     

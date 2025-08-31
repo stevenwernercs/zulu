@@ -1,7 +1,7 @@
 **Zulu**
 
 - **Description:** Toy brain/neuronal growth sandbox plus an LWJGL window demo. The core model simulates neurons (dendrites, soma, axon, synapses) that grow within bounds and exchange neurotransmitters; a simple LWJGL/GLFW window is included for visualization scaffolding.
-- **Languages:** Java 8+ (tested with JDK 11)
+- **Languages:** Java 11+ (tested with JDK 11)
 - **Build Tool:** Maven
 
 **Intent**
@@ -17,7 +17,7 @@
 - Builds a small network (sensory, inter-neuron, motor), starts one thread per neuron.
 - Each neuron loop: sample nearby transmitters at dendrites → sum potential → threshold at soma → propagate via axon → emit transmitters at synapses.
 - Brain maintains a coordinate-indexed fluid of transmitters with decay; prints a textual “plot” and motor neuron output to the console.
-- LWJGL 3D visualizer renders the live brain as colored points in 3D (soma, dendrites, axon tips, synapses, transmitters) and updates continuously.
+- JavaFX 3D visualizer renders the live brain as colored points in 3D (soma, dendrites, axon tips, synapses, transmitters) and updates continuously. The prior LWJGL visualizer remains in the codebase for future fixes.
 
 **Project Layout**
 
@@ -60,12 +60,9 @@ Artifacts:
 - Console brain simulation (text output):
   - `mvn -q org.codehaus.mojo:exec-maven-plugin:3.1.0:java -Dexec.mainClass=com.trifidearth.zulu.brain.Brain`
 
-- Fat jar (auto-selects host LWJGL natives via Maven OS profiles at build time):
-  - `java -jar target/zulu-1.0-SNAPSHOT-all.jar`
-  - Linux/WSL2: ensure an OpenGL-capable display (X11/Wayland) is available.
-  - WSL: Joystick device warnings are suppressed; ensure an X server or Wayland bridge is running.
-  - If the window appears black: this is expected initially; nodes are small points. The border box is now brighter; activity appears as colored points over time.
-  - Cross-platform: the fat jar bundles core LWJGL natives for Linux/Windows/macOS so you can build once and run on any OS.
+- Fat jar: `java -jar target/zulu-1.0-SNAPSHOT-all.jar`
+  - Default renderer: JavaFX 3D (no additional native flags needed).
+  - The LWJGL renderer remains available but is not the default.
 
 Run scripts (auto-build if jar missing):
 - Linux: `scripts/run-linux.sh`
@@ -74,8 +71,8 @@ Run scripts (auto-build if jar missing):
 - Windows: `scripts/run-windows.bat`
 
 Notes on natives loading
-- The run scripts extract LWJGL native libraries per-OS into `target/natives/<os>` and set `-Dorg.lwjgl.librarypath` accordingly. This avoids “Failed to load a library: lwjgl.dll” on Windows.
-- If you move just the fat jar elsewhere, also copy the `target/natives/<os>` directory and add `-Dorg.lwjgl.librarypath` to your `java -jar` command.
+- JavaFX is bundled via platform-specific artifacts and doesn’t require manual native flags in typical setups.
+- If you switch back to the LWJGL renderer, the run scripts set `-Dorg.lwjgl.librarypath` and unpack LWJGL natives per-OS.
 
 Notes:
 - A runnable fat jar (`-all.jar`) is produced via the Maven Shade plugin.

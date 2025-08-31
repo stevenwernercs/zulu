@@ -7,13 +7,34 @@
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <lwjgl.version>3.1.1</lwjgl.version>
         <lwjgl.natives>natives-linux</lwjgl.natives>
+        <javafx.version>17.0.9</javafx.version>
+        <javafx.platform>linux</javafx.platform>
     </properties>
     <dependencies>
+        <!-- JavaFX (platform-specific classifiers) -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -429,6 +450,7 @@
             </activation>
             <properties>
                 <lwjgl.natives>natives-linux</lwjgl.natives>
+                <javafx.platform>linux</javafx.platform>
             </properties>
         </profile>
         <profile>
@@ -440,6 +462,7 @@
             </activation>
             <properties>
                 <lwjgl.natives>natives-windows</lwjgl.natives>
+                <javafx.platform>win</javafx.platform>
             </properties>
         </profile>
         <profile>
@@ -451,6 +474,7 @@
             </activation>
             <properties>
                 <lwjgl.natives>natives-macos</lwjgl.natives>
+                <javafx.platform>mac</javafx.platform>
             </properties>
         </profile>
     </profiles>
