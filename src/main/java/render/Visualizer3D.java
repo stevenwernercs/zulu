@@ -45,6 +45,20 @@ public class Visualizer3D {
     }
 
     private void init() {
+        // Open a log window ASAP so errors are visible even if GL init fails
+        LogWindow logWin = new LogWindow("Brain Console");
+        logWin.show();
+        try {
+            LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
+            LogbackGuiAppender guiAppender = new LogbackGuiAppender(logWin);
+            guiAppender.setContext(ctx);
+            guiAppender.start();
+            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+            root.addAppender(guiAppender);
+        } catch (Throwable t) {
+            // ignore if logback isn't available
+        }
+
         final GLFWErrorCallback printer = GLFWErrorCallback.createPrint(System.err);
         GLFWErrorCallback callback = new GLFWErrorCallback() {
             @Override
@@ -61,8 +75,10 @@ public class Visualizer3D {
             }
         };
         glfwSetErrorCallback(callback);
-
-        if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
+        if (!glfwInit()) {
+            logWin.appendLine("ERROR: Unable to initialize GLFW. Check graphics drivers and that natives are available.");
+            throw new IllegalStateException("Unable to initialize GLFW");
+        }
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -118,21 +134,6 @@ public class Visualizer3D {
             brain.start();
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize Brain", e);
-        }
-
-        // Open a log window and mirror console + SLF4J logs
-        LogWindow logWin = new LogWindow("Brain Console");
-        logWin.show();
-        // Attach a Logback appender
-        try {
-            LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
-            LogbackGuiAppender guiAppender = new LogbackGuiAppender(logWin);
-            guiAppender.setContext(ctx);
-            guiAppender.start();
-            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-            root.addAppender(guiAppender);
-        } catch (Throwable t) {
-            // ignore if logback isn't available for any reason
         }
         // Mirror brain.out to the log window as well
         final java.io.OutputStream guiOut = logWin.asOutputStream();
