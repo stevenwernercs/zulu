@@ -8,7 +8,8 @@ package com.trifidearth.zulu.message.transmitter;
 import com.trifidearth.zulu.message.Message;
 import com.trifidearth.zulu.message.potential.ElectricPotential;
 import com.trifidearth.zulu.utils.Utils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -16,7 +17,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class Transmitter extends Message {
 
-    private static final Logger log = Logger.getLogger(Transmitter.class);
+    private static final Logger log = LoggerFactory.getLogger(Transmitter.class);
 
     String name;
     final ElectricPotential potential;

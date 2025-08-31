@@ -50,6 +50,7 @@
 
 Artifacts:
 - Jar: `target/zulu-1.0-SNAPSHOT.jar`
+- Fat jar: `target/zulu-1.0-SNAPSHOT-all.jar` (runnable)
 
 **Run**
 
@@ -58,6 +59,10 @@ Artifacts:
   - With local maven (downloaded above): `./.tools/apache-maven-3.9.6/bin/mvn -q -Dmaven.repo.local=.m2 org.codehaus.mojo:exec-maven-plugin:3.1.0:java -Dexec.mainClass=render.EngineTest`
 - Console brain simulation (text output):
   - `mvn -q org.codehaus.mojo:exec-maven-plugin:3.1.0:java -Dexec.mainClass=com.trifidearth.zulu.brain.Brain`
+
+- Fat jar (auto-selects host LWJGL natives via Maven OS profiles at build time):
+  - `java -jar target/zulu-1.0-SNAPSHOT-all.jar`
+  - Linux/WSL2: ensure an OpenGL-capable display (X11/Wayland) is available.
 
 Notes:
 - The jar produced by `package` is not “fat.” Running with `java -jar` will not work without the dependency classpath. Use the `exec-maven-plugin` commands above, or add a shading step (see Next Steps).
@@ -71,8 +76,9 @@ Notes:
 
 **Known Issues / Rough Edges**
 
-- **Logging:** Uses log4j 1.x, which is EOL. Consider updating to SLF4J + Logback or log4j2.
+- **Logging:** Updated to SLF4J + Logback (console appender). Adjust `src/main/resources/logback.xml` to change levels.
 - **Platform-specific natives:** `pom.xml` pulls LWJGL `natives-linux`. Adjust `<lwjgl.natives>` for macOS/Windows if needed.
+  - Auto-selection added: Maven profiles set natives for Linux, Windows, or macOS at build time.
 
 Fixes applied in this repo version:
 - Added `Utils.getSecondOfMillis(long)` and removed the missing import issue.
@@ -89,6 +95,14 @@ Fixes applied in this repo version:
 - **Wire rendering:** Visualize the `Brain` state in `Render.loop()` instead of the static gray background.
 - **Model refinements:** Tune growth heuristics, transmitter dynamics, and add simple learning signals.
 - **Tests:** Add unit tests for coordinate math, growth boundaries, and transmitter decay.
+
+**TODO**
+
+- Rendering: draw connectors (lines) between soma–axon–synapses and soma–dendrites; scale point sizes by activity.
+- Input: allow user to seed sensory neurons or pause/resume growth via keyboard.
+- Performance: move rendering to VBOs; reduce per-frame allocations; consider fixed timestep.
+- Packaging: add OS-specific launch scripts; add macOS codesigning notes if distributing.
+- Observability: expose metrics for neuron counts, firing rates, transmitter volume.
 
 **License**
 

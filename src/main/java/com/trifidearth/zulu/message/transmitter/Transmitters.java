@@ -13,7 +13,8 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -21,7 +22,7 @@ import org.apache.log4j.Logger;
  */
 public class Transmitters extends Message {
 
-    private static final Logger log = Logger.getLogger(Transmitters.class);
+    private static final Logger log = LoggerFactory.getLogger(Transmitters.class);
     
     private final ConcurrentLinkedQueue<Transmitter> transmitterList = new ConcurrentLinkedQueue<>();
     private static final List<Transmitter> AVAILABLE_TRANSMITTERS = new ArrayList<>(Arrays.asList(

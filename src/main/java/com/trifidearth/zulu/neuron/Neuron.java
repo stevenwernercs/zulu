@@ -16,7 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -24,7 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class Neuron extends Node implements Listening, Grows, Runnable{
 
-    private static final Logger log = Logger.getLogger(Neuron.class);
+    private static final Logger log = LoggerFactory.getLogger(Neuron.class);
     Brain brain;
     int name;
     NeuronType type;

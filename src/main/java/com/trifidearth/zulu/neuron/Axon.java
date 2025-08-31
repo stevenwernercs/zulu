@@ -8,7 +8,8 @@ package com.trifidearth.zulu.neuron;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.message.potential.ActionPotential;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -16,7 +17,7 @@ import org.apache.log4j.Logger;
  */
 public class Axon extends CommunicationNode<ActionPotential, ActionPotential> implements Grows{
     
-    private static final Logger log = Logger.getLogger(Axon.class);
+    private static final Logger log = LoggerFactory.getLogger(Axon.class);
     
     double distance;
 

@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class Brain {
     
-    private static final Logger log = Logger.getLogger(Brain.class);
+    private static final Logger log = LoggerFactory.getLogger(Brain.class);
     Collection<Neuron> neurons;
     CoordinateBounds bounds;
     private int transmitterCount;
