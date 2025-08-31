@@ -23,8 +23,8 @@ public class Coordinate implements Comparable {
     
     public Coordinate(int x, int y, int z) {
         this.x = x;
-        this.y = y; 
-        this.z = 0; //TODO use z
+        this.y = y;
+        this.z = z;
     }
     
     public Coordinate(CoordinateBounds bounds) {
@@ -40,10 +40,11 @@ public class Coordinate implements Comparable {
     }
     
     public double computeDistanceTo(Coordinate that) {
-        return  Math.pow(Math.pow(this.x-that.x,2)+
-                                Math.pow(this.z-that.z,2)+
-                                Math.pow(this.z-that.z,2), 
-                              .5);
+        return Math.pow(
+                Math.pow(this.x - that.x, 2)
+              + Math.pow(this.y - that.y, 2)
+              + Math.pow(this.z - that.z, 2),
+              0.5);
     }
 
     public int getX() {
