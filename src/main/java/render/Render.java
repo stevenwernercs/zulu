@@ -48,9 +48,20 @@ public class Render {
     }
 
     private void init() {
-        // Setup an error callback. The default implementation
-        // will print the error message in System.err.
-        GLFWErrorCallback.createPrint(System.err).set();
+        // Setup an error callback and filter benign joystick errors (common on WSL)
+        final GLFWErrorCallback printer = GLFWErrorCallback.createPrint(System.err);
+        GLFWErrorCallback callback = new GLFWErrorCallback() {
+            @Override
+            public void invoke(int error, long description) {
+                String msg = GLFWErrorCallback.getDescription(description);
+                if (error == GLFW_PLATFORM_ERROR && msg != null && msg.contains("/dev/input")) {
+                    // Ignore joystick device messages on platforms without /dev/input (e.g., WSL)
+                    return;
+                }
+                printer.invoke(error, description);
+            }
+        };
+        glfwSetErrorCallback(callback);
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if (!glfwInit())
