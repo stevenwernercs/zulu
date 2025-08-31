@@ -62,8 +62,9 @@ Artifacts:
 
 - Fat jar (auto-selects host LWJGL natives via Maven OS profiles at build time):
   - `java -jar target/zulu-1.0-SNAPSHOT-all.jar`
-  - Linux/WSL2: ensure an OpenGL-capable display (X11/Wayland) is available.
+- Linux/WSL2: ensure an OpenGL-capable display (X11/Wayland) is available.
   - WSL: Joystick device warnings are suppressed; ensure an X server or Wayland bridge is running.
+  - If the window appears black: this is expected initially; nodes are small points. The border box is now brighter; activity appears as colored points over time.
 
 Run scripts (auto-build if jar missing):
 - Linux: `scripts/run-linux.sh`

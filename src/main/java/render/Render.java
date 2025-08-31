@@ -54,9 +54,13 @@ public class Render {
             @Override
             public void invoke(int error, long description) {
                 String msg = GLFWErrorCallback.getDescription(description);
-                if (error == GLFW_PLATFORM_ERROR && msg != null && msg.contains("/dev/input")) {
-                    // Ignore joystick device messages on platforms without /dev/input (e.g., WSL)
-                    return;
+                // Ignore common joystick device messages on platforms without /dev/input (e.g., WSL)
+                if (error == GLFW_PLATFORM_ERROR && msg != null) {
+                    if (msg.contains("/dev/input")
+                        || msg.contains("Failed to watch for joystick connections")
+                        || msg.contains("Failed to open joystick device directory")) {
+                        return;
+                    }
                 }
                 printer.invoke(error, description);
             }
@@ -142,8 +146,8 @@ public class Render {
     private void drawBrain(int width, int height) {
         Map<Coordinate, List<String>> map = brain.getNodeLocationMap();
 
-        // Draw bounds box
-        glColor3f(0.2f, 0.2f, 0.2f);
+        // Draw bounds box (brighter so it's visible on dark bg)
+        glColor3f(0.6f, 0.6f, 0.6f);
         glLineWidth(1f);
         glBegin(GL_LINE_LOOP);
         glVertex2f(20f, 20f);
@@ -153,7 +157,7 @@ public class Render {
         glEnd();
 
         // Draw nodes and transmitters
-        glPointSize(5f);
+        glPointSize(6f);
         glBegin(GL_POINTS);
         for (Map.Entry<Coordinate, List<String>> entry : map.entrySet()) {
             float[] xy = toScreen(entry.getKey(), width, height);
