@@ -59,12 +59,17 @@ public class SwingVisualizer implements Runnable {
             }
         }).start();
 
-        // periodically deposit random transmitters to stimulate activity
+        // periodically deposit transmitters near existing nodes to stimulate activity
         new Timer(750, e -> {
             try {
-                for (int i = 0; i < 2; i++) {
-                    Coordinate c = new Coordinate(bounds);
-                    brain.depositTransmitters(c, Transmitters.getRandomTransmitters());
+                Map<Coordinate, List<String>> map = brain.getNodeLocationMap();
+                java.util.List<Coordinate> keys = new java.util.ArrayList<>(map.keySet());
+                if (!keys.isEmpty()) {
+                    int injections = Math.min(4, Math.max(1, keys.size()/20));
+                    for (int i = 0; i < injections; i++) {
+                        Coordinate c = keys.get((int)(Math.random() * keys.size()));
+                        brain.depositTransmitters(c, Transmitters.getRandomTransmitters());
+                    }
                 }
             } catch (Throwable t) {
                 t.printStackTrace(System.out);

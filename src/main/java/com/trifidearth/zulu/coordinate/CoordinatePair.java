@@ -55,24 +55,34 @@ public class CoordinatePair {
     }
     
     public void growRandom(double growDistance, CoordinateBounds bounds) {
-        Coordinate growPoint;
+        Coordinate candidate;
         int attempts = 0;
         do {
-            growPoint = calculate(fixed,
+            candidate = calculate(fixed,
                     getDistance() + (Math.random() * growDistance),
                     getThetaXY() + (Math.random() * 360),
                     getThetaXZ() + (Math.random() * 360));
             attempts++;
             if (attempts > 500) break;
-        } while (bounds.outOf(growPoint));
-        if (bounds.outOf(growPoint)) {
-            // Fallback: random point within bounds relative to bounds origin
-            growPoint = calculate(bounds.getOrigin(),
-                    Math.random() * bounds.getRadius(),
-                    Math.random() * 360,
-                    Math.random() * 360);
+        } while (bounds.outOf(candidate));
+        if (bounds.outOf(candidate)) {
+            // Smooth fallback: clamp to the sphere along the ray from bounds.origin to candidate
+            candidate = clampToSphere(bounds.getOrigin(), candidate, bounds.getRadius());
         }
-        growing = growPoint;
+        growing = candidate;
+    }
+
+    private static Coordinate clampToSphere(Coordinate origin, Coordinate point, int radius) {
+        double dx = point.getX() - origin.getX();
+        double dy = point.getY() - origin.getY();
+        double dz = point.getZ() - origin.getZ();
+        double len = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        if (len == 0) return new Coordinate(origin.getX(), origin.getY(), origin.getZ());
+        double scale = Math.min(1.0, (radius - 1.0) / len);
+        int nx = origin.getX() + (int)Math.round(dx * scale);
+        int ny = origin.getY() + (int)Math.round(dy * scale);
+        int nz = origin.getZ() + (int)Math.round(dz * scale);
+        return new Coordinate(nx, ny, nz);
     }
 
     private double getDistance() {
