@@ -2,4 +2,6 @@ target/
 nbactions.xml
 .tools/
 .m2/
+# Local logs and artifacts
 .build.log
+*.log

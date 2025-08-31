@@ -4,18 +4,33 @@
 - **Languages:** Java 8+ (tested with JDK 11)
 - **Build Tool:** Maven
 
+**Intent**
+
+- **Goal:** Explore a toy, self-organizing brain where neurons grow connections within spatial bounds and exchange neurotransmitters. Emphasis is on structure (dendrites, soma, axon, synapses) and emergent connectivity via simple local rules, not biological fidelity.
+- **Core mechanics:**
+  - Each neuron has a fixed soma point and a growing endpoint for each process (dendrite/synapse/axon) that “wanders” within `CoordinateBounds`.
+  - Dendrites accumulate nearby neurotransmitters into an electric potential; the soma thresholds that potential to emit action potentials; axons/synapses deliver new transmitters.
+  - Transmitters have lifetimes and decay; local transmitter presence influences growth wander.
+
+**Current Behavior**
+
+- Builds a small network (sensory, inter-neuron, motor), starts one thread per neuron.
+- Each neuron loop: sample nearby transmitters at dendrites → sum potential → threshold at soma → propagate via axon → emit transmitters at synapses.
+- Brain maintains a coordinate-indexed fluid of transmitters with decay; prints a textual “plot” and motor neuron output to the console.
+- LWJGL demo opens a gray window; no visual brain rendering is implemented yet.
+
 **Project Layout**
 
 - `render.Render`: Minimal LWJGL window; prints LWJGL version and opens a resizable gray window. Entry via `render.EngineTest`.
 - `com.trifidearth.zulu.brain.Brain`: Creates a small network, starts neuron threads, and logs a textual “plot” of activity. Also contains a `main` for console output.
 - `com.trifidearth.zulu.neuron.*`: Neuron model
   - `Neuron`: Owns `Soma`, `Axon`, `Dendrite`s, `Synapse`s; runs an update loop.
-  - `Soma`: Integrates dendritic input (ElectricPotential) and may emit an `ActionPotiential` when above threshold.
+  - `Soma`: Integrates dendritic input (ElectricPotential) and may emit an `ActionPotential` when above threshold.
   - `Dendrite`: Samples nearby transmitters and contributes to soma potential; wanders/grows within bounds.
   - `Axon`: Propagates action potentials with a delay proportional to length; grows once from the soma.
   - `Synapse`: Emits random transmitters on action potentials; adapts its “wander” based on surroundings.
 - `com.trifidearth.zulu.message.*`: Messages passed between nodes
-  - `ElectricPotiential`, `ActionPotiential` (note: spelling preserved from the original code).
+  - `ElectricPotential`, `ActionPotential`.
   - `transmitter.*`: Neurotransmitters (`Dopamine`, `Gaba`, etc.) grouped in `Transmitters` with simple lifetime/decay.
 - `com.trifidearth.zulu.coordinate.*`: Coordinates, pairs, and bounded growth helpers.
 - `src/main/resources/log4j.properties`: Logging configuration for log4j 1.x.
@@ -56,23 +71,25 @@ Notes:
 
 **Known Issues / Rough Edges**
 
-- **Missing utility:** `Transmitter` imports `com.trifidearth.zulu.utils.Utils` for time formatting; this class isn’t present. The code compiles when the package isn’t built, but adding the brain module to a runnable artifact will require a tiny `Utils` with `getSecondOfMillis(long)`.
-- **Spelling:** “Potiential” is consistently misspelled across classes; left as-is to preserve history. Consider renaming for clarity.
-- **Physics/math quirks:**
-  - `Coordinate.computeDistanceTo` uses `z` twice (likely a typo; should include `y`).
-  - `Synapse.checkSurroundings` sets `aliveNearby` using `countZeroPotentials()` instead of non-zero, probably incorrect.
-  - `Node.getfixedPoint()` method name casing is inconsistent with Java conventions.
+- **Logging:** Uses log4j 1.x, which is EOL. Consider updating to SLF4J + Logback or log4j2.
+- **Platform-specific natives:** `pom.xml` pulls LWJGL `natives-linux`. Adjust `<lwjgl.natives>` for macOS/Windows if needed.
+
+Fixes applied in this repo version:
+- Added `Utils.getSecondOfMillis(long)` and removed the missing import issue.
+- Corrected spelling: `potiential` → `potential` across packages, classes, and method names.
+- Fixed math: `Coordinate` now sets `z` in constructor and uses x,y,z deltas for distance.
+- Fixed logic: `Synapse.checkSurroundings` now counts non-zero potentials for `aliveNearby`.
+- API casing: `Node.getFixedPoint()` uses conventional casing.
 - **Logging:** Uses log4j 1.x, which is EOL. Consider updating to SLF4J + Logback or log4j2.
 - **Platform-specific natives:** `pom.xml` pulls LWJGL `natives-linux`. Adjust `<lwjgl.natives>` for macOS/Windows if needed.
 
 **Next Steps**
 
 - **Make a fat jar:** Add the Maven Shade plugin to produce a runnable jar including LWJGL and natives.
-- **Fix math/typos:** Correct distance math, naming, and `Synapse` logic; add small `Utils` helper.
 - **Wire rendering:** Visualize the `Brain` state in `Render.loop()` instead of the static gray background.
+- **Model refinements:** Tune growth heuristics, transmitter dynamics, and add simple learning signals.
 - **Tests:** Add unit tests for coordinate math, growth boundaries, and transmitter decay.
 
 **License**
 
 - No explicit license file is present. If you intend to open source this, add a suitable `LICENSE`.
-
