@@ -28,17 +28,14 @@ public class Coordinate implements Comparable {
     }
     
     public Coordinate(CoordinateBounds bounds) {
-        // Pick a random point inside the spherical bounds, not just the cube, to avoid out-of-bounds starts
+        // Pick a random point inside spherical bounds
         int tries = 0;
         do {
             x = (int)(getRandom() * bounds.getRadius());
             y = (int)(getRandom() * bounds.getRadius());
-            z = (int)(getRandom() * bounds.getRadius());
+            z = CoordinatePair.isForce2D() ? 0 : (int)(getRandom() * bounds.getRadius());
         } while (bounds.outOf(this) && ++tries < 1000);
-        if (bounds.outOf(this)) {
-            // As a last resort, clamp to origin (inside sphere)
-            x = y = z = 0;
-        }
+        if (bounds.outOf(this)) { x = y = 0; z = 0; }
     }
     
     public Coordinate(Coordinate coordinate, int radius) {

@@ -14,6 +14,11 @@ public class CoordinatePair {
     private Coordinate fixed;
     private Coordinate growing;
 
+    private static boolean FORCE_2D = false;
+
+    public static void setForce2D(boolean force) { FORCE_2D = force; }
+    public static boolean isForce2D() { return FORCE_2D; }
+
     public CoordinatePair(Coordinate point) {
         this.fixed = point;
         this.growing = point;
@@ -104,8 +109,7 @@ public class CoordinatePair {
     private static Coordinate calculate(Coordinate origin, double distance, double degreeXY, double degreeXZ) {
         double x = (Math.cos(Math.toRadians(degreeXZ))*distance) + origin.getX();
         double y = (Math.sin(Math.toRadians(degreeXY))*distance) + origin.getY();
-        double z = (Math.sin(Math.toRadians(degreeXZ))*distance) + origin.getZ();
-        
+        double z = FORCE_2D ? origin.getZ() : (Math.sin(Math.toRadians(degreeXZ))*distance) + origin.getZ();
         return new Coordinate((int)x, (int)y, (int)z);
     }
 
