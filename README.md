@@ -17,7 +17,7 @@
 - Builds a small network (sensory, inter-neuron, motor), starts one thread per neuron.
 - Each neuron loop: sample nearby transmitters at dendrites → sum potential → threshold at soma → propagate via axon → emit transmitters at synapses.
 - Brain maintains a coordinate-indexed fluid of transmitters with decay; prints a textual “plot” and motor neuron output to the console.
-- LWJGL demo opens a gray window; no visual brain rendering is implemented yet.
+- LWJGL window renders the live brain state as colored points (soma, dendrites, axon tips, synapses, transmitters) and updates continuously.
 
 **Project Layout**
 
@@ -33,7 +33,7 @@
   - `ElectricPotential`, `ActionPotential`.
   - `transmitter.*`: Neurotransmitters (`Dopamine`, `Gaba`, etc.) grouped in `Transmitters` with simple lifetime/decay.
 - `com.trifidearth.zulu.coordinate.*`: Coordinates, pairs, and bounded growth helpers.
-- `src/main/resources/log4j.properties`: Logging configuration for log4j 1.x.
+- `src/main/resources/logback.xml`: Logging configuration (SLF4J + Logback).
 
 **Requirements**
 
@@ -65,20 +65,19 @@ Artifacts:
   - Linux/WSL2: ensure an OpenGL-capable display (X11/Wayland) is available.
 
 Notes:
-- The jar produced by `package` is not “fat.” Running with `java -jar` will not work without the dependency classpath. Use the `exec-maven-plugin` commands above, or add a shading step (see Next Steps).
+- A runnable fat jar (`-all.jar`) is produced via the Maven Shade plugin.
 
 **Design Notes**
 
 - **Update loop:** Each `Neuron` runs as a daemon thread, repeatedly aggregating dendritic inputs, potentially firing, and depositing transmitters into a shared fluid map keyed by coordinates.
 - **Growth:** `Dendrite`/`Synapse` “wander” and grow within `CoordinateBounds`, using random deltas limited by a wander factor.
 - **Messaging:** `Transmitters` carry a potential that decays to zero after a lifespan; dead messages are eventually removed.
-- **Rendering:** The `Render` window currently acts as scaffolding; no brain rendering is wired yet.
+- **Rendering:** The LWJGL window maps coordinates into 2D and draws colored points for node/transmitter types; updates every frame.
 
 **Known Issues / Rough Edges**
 
-- **Logging:** Updated to SLF4J + Logback (console appender). Adjust `src/main/resources/logback.xml` to change levels.
-- **Platform-specific natives:** `pom.xml` pulls LWJGL `natives-linux`. Adjust `<lwjgl.natives>` for macOS/Windows if needed.
-  - Auto-selection added: Maven profiles set natives for Linux, Windows, or macOS at build time.
+- OpenGL/display required: ensure a working display (X11/Wayland/macOS/Windows). On WSL2, set `DISPLAY` and run an X server or Wayland bridge.
+- Biological model is intentionally simplified; growth/firing rules are heuristic.
 
 Fixes applied in this repo version:
 - Added `Utils.getSecondOfMillis(long)` and removed the missing import issue.
@@ -86,8 +85,8 @@ Fixes applied in this repo version:
 - Fixed math: `Coordinate` now sets `z` in constructor and uses x,y,z deltas for distance.
 - Fixed logic: `Synapse.checkSurroundings` now counts non-zero potentials for `aliveNearby`.
 - API casing: `Node.getFixedPoint()` uses conventional casing.
-- **Logging:** Uses log4j 1.x, which is EOL. Consider updating to SLF4J + Logback or log4j2.
-- **Platform-specific natives:** `pom.xml` pulls LWJGL `natives-linux`. Adjust `<lwjgl.natives>` for macOS/Windows if needed.
+- Logging migrated to SLF4J + Logback with `logback.xml`.
+- Auto OS natives selection via Maven profiles (Linux/Windows/macOS).
 
 **Next Steps**
 
