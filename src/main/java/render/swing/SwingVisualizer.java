@@ -3,6 +3,7 @@ package render.swing;
 import com.trifidearth.zulu.brain.Brain;
 import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
+import com.trifidearth.zulu.message.transmitter.Transmitters;
 
 import javax.swing.*;
 import java.awt.*;
@@ -130,22 +131,73 @@ public class SwingVisualizer implements Runnable {
             int h = br.y - tl.y;
             g2.drawRect(tl.x, tl.y, w, h);
 
-            // Draw nodes/transmitters
+            // Draw nodes/transmitters and gather per-neuron endpoints
             Map<Coordinate, List<String>> map = brain.getNodeLocationMap();
+
+            class Ends { Point soma; Point axon; java.util.List<Point> dend = new java.util.ArrayList<>(); java.util.List<Point> syn = new java.util.ArrayList<>(); }
+            java.util.Map<String, Ends> endsById = new java.util.HashMap<>();
+
             for (Map.Entry<Coordinate, List<String>> e : map.entrySet()) {
                 Coordinate c = e.getKey();
                 Point p = worldToScreen(c.getX(), c.getY());
+
+                // Determine point color and size; also collect endpoints
+                int size = 5;
                 Color color = new Color(200,200,200);
                 for (String label : e.getValue()) {
-                    if (label.startsWith("T")) { color = new Color(50,160,255); break; }
-                    if (label.endsWith("_N")) { color = Color.WHITE; break; }
-                    if (label.endsWith("_D")) { color = new Color(80,220,80); break; }
-                    if (label.endsWith("_A")) { color = new Color(255,90,70); break; }
-                    if (label.endsWith("_S")) { color = new Color(240,80,240); break; }
+                    if (label.startsWith("T")) {
+                        // transmitter cluster size boost by count
+                        try {
+                            int cnt = Integer.parseInt(label.substring(1));
+                            size = Math.min(5 + cnt, 14);
+                        } catch (Exception ignore) {}
+                        color = new Color(50,160,255);
+                    } else if (label.endsWith("_N")) {
+                        color = Color.WHITE;
+                        String id = label.substring(0, label.indexOf('_'));
+                        Ends ends = endsById.computeIfAbsent(id, k -> new Ends());
+                        ends.soma = p;
+                    } else if (label.endsWith("_D")) {
+                        color = new Color(80,220,80);
+                        String id = label.substring(0, label.indexOf('_'));
+                        Ends ends = endsById.computeIfAbsent(id, k -> new Ends());
+                        ends.dend.add(p);
+                    } else if (label.endsWith("_A")) {
+                        color = new Color(255,90,70);
+                        String id = label.substring(0, label.indexOf('_'));
+                        Ends ends = endsById.computeIfAbsent(id, k -> new Ends());
+                        ends.axon = p;
+                    } else if (label.endsWith("_S")) {
+                        color = new Color(240,80,240);
+                        String id = label.substring(0, label.indexOf('_'));
+                        Ends ends = endsById.computeIfAbsent(id, k -> new Ends());
+                        ends.syn.add(p);
+                    }
                 }
                 g2.setColor(color);
-                int size = 5;
                 g2.fillOval(p.x - size/2, p.y - size/2, size, size);
+            }
+
+            // Draw connectors from soma to endpoints
+            g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1f, new float[]{6f,6f}, 0f));
+            for (Map.Entry<String, Ends> en : endsById.entrySet()) {
+                Ends ends = en.getValue();
+                if (ends.soma == null) continue;
+                // Soma to axon
+                if (ends.axon != null) {
+                    g2.setColor(new Color(255,90,70,160));
+                    g2.drawLine(ends.soma.x, ends.soma.y, ends.axon.x, ends.axon.y);
+                }
+                // Soma to dendrites
+                g2.setColor(new Color(80,220,80,160));
+                for (Point dp : ends.dend) {
+                    g2.drawLine(ends.soma.x, ends.soma.y, dp.x, dp.y);
+                }
+                // Soma to synapses
+                g2.setColor(new Color(240,80,240,160));
+                for (Point sp : ends.syn) {
+                    g2.drawLine(ends.soma.x, ends.soma.y, sp.x, sp.y);
+                }
             }
         }
     }
