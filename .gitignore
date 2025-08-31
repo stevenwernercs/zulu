@@ -1,2 +1,5 @@
 target/
 nbactions.xml
+.tools/
+.m2/
+.build.log
