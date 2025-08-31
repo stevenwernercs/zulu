@@ -40,21 +40,24 @@ public class Brain {
         out = System.out;
         this.bounds = bounds;
         this.neurons = new ArrayList<>();
+        System.out.println("Brain: constructing with inputs="+inputs+", relay="+relay+", outputs="+outputs+", bounds="+bounds+");
+        System.out.flush();
         for (int i = 'a'; i < inputs + 'a'; i++) {
+            System.out.println("Brain: creating sensory neuron '" + (char)i + "'..."); System.out.flush();
             Neuron sensor = new Neuron(this, i, NeuronType.SENSORY, new Coordinate(bounds), 1, 5);
-            log.trace("Created new Neuron: " + sensor);
             this.neurons.add(sensor);
         }
         for (int i = 0; i < relay; i++) {
+            System.out.println("Brain: creating inter neuron #" + i + "..."); System.out.flush();
             Neuron inter = new Neuron(this, i, NeuronType.INTER_NEURON, new Coordinate(bounds), 5, 5);
-            log.trace("Created new Neuron: " + inter);
             this.neurons.add(inter);
         }
         for (int i = 'A'; i < outputs + 'A'; i++) {
+            System.out.println("Brain: creating motor neuron '" + (char)i + "'..."); System.out.flush();
             Neuron motor = new Neuron(this, i, NeuronType.MOTOR, new Coordinate(bounds), 5, 1);
-            log.trace("Created new Neuron: " + motor);
             this.neurons.add(motor);
         }
+        System.out.println("Brain: construction complete. total neurons="+this.neurons.size()); System.out.flush();
     }
 
     public CoordinateBounds getBounds() {
