@@ -63,7 +63,7 @@ public class SwingVisualizer implements Runnable {
         repaintTimer.start();
 
         // periodically grow neuron processes to animate structure
-        logicTimer = new Timer(500, e -> tick());
+        logicTimer = new Timer(500, e -> tick(false));
         logicTimer.start();
 
         System.out.println("SwingVisualizer: UI visible. Use mouse wheel to zoom, drag to pan, 'R' to reset.");
