@@ -48,6 +48,27 @@ public class SwingVisualizer implements Runnable {
 
         // repaint at ~30 FPS
         new Timer(33, e -> view.repaint()).start();
+
+        // periodically grow neuron processes to animate structure
+        new Timer(500, e -> {
+            try {
+                brain.grow();
+            } catch (Throwable t) {
+                t.printStackTrace(System.out);
+            }
+        }).start();
+
+        // periodically deposit random transmitters to stimulate activity
+        new Timer(750, e -> {
+            try {
+                for (int i = 0; i < 2; i++) {
+                    Coordinate c = new Coordinate(bounds);
+                    brain.depositTransmitters(c, Transmitters.getRandomTransmitters());
+                }
+            } catch (Throwable t) {
+                t.printStackTrace(System.out);
+            }
+        }).start();
         System.out.println("SwingVisualizer: UI visible. Use mouse wheel to zoom, drag to pan, 'R' to reset.");
     }
 
