@@ -28,7 +28,7 @@ public abstract class Node {
         this.fixedPoint = fixedPoint;
     }
 
-    public Coordinate getfixedPoint() {
+    public Coordinate getFixedPoint() {
         return fixedPoint;
     }
     

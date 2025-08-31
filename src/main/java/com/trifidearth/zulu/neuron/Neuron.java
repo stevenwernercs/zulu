@@ -94,7 +94,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     public Map<Coordinate,List<String>> getNodeLocationMap() {
         Map<Coordinate,List<String>> map = new HashMap();
         Map map2 = new HashMap();
-        appendAtLocation(map, soma.getfixedPoint(), name+"_N");
+        appendAtLocation(map, soma.getFixed(), name+"_N");
         appendAtLocation(map, axon.getGrowing(), name+"_A");
         for(Dendrite d : dendrites) {
             appendAtLocation(map, d.getGrowing(), name+"_D");    
