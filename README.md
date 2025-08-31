@@ -88,6 +88,9 @@ Notes:
 - Scroll: Zoom in/out.
 - Keyboard: `ESC` to quit; `R` to reset camera.
 
+Log window
+- A separate window titled “Brain Console” streams logs and Brain.print output so you can observe activity without an IDE console.
+
 **Known Issues / Rough Edges**
 
 - OpenGL/display required: ensure a working display (X11/Wayland/macOS/Windows). On WSL2, set `DISPLAY` and run an X server or Wayland bridge.

@@ -4,6 +4,10 @@ import com.trifidearth.zulu.brain.Brain;
 import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import org.lwjgl.Version;
+import ch.qos.logback.classic.LoggerContext;
+import org.slf4j.LoggerFactory;
+import render.ui.LogWindow;
+import render.ui.LogbackGuiAppender;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 
@@ -115,6 +119,33 @@ public class Visualizer3D {
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize Brain", e);
         }
+
+        // Open a log window and mirror console + SLF4J logs
+        LogWindow logWin = new LogWindow("Brain Console");
+        logWin.show();
+        // Attach a Logback appender
+        try {
+            LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
+            LogbackGuiAppender guiAppender = new LogbackGuiAppender(logWin);
+            guiAppender.setContext(ctx);
+            guiAppender.start();
+            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+            root.addAppender(guiAppender);
+        } catch (Throwable t) {
+            // ignore if logback isn't available for any reason
+        }
+        // Mirror brain.out to the log window as well
+        final java.io.OutputStream guiOut = logWin.asOutputStream();
+        brain.out = new java.io.PrintStream(new java.io.OutputStream() {
+            @Override
+            public void write(int b) {
+                try { guiOut.write(b); } catch (java.io.IOException ignored) {}
+            }
+            @Override
+            public void write(byte[] b, int off, int len) {
+                try { guiOut.write(b, off, len); } catch (java.io.IOException ignored) {}
+            }
+        }, true);
     }
 
     private void setPerspective(int width, int height) {
