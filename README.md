@@ -91,10 +91,18 @@ Fixes applied in this repo version:
 
 **Next Steps**
 
-- **Make a fat jar:** Add the Maven Shade plugin to produce a runnable jar including LWJGL and natives.
-- **Wire rendering:** Visualize the `Brain` state in `Render.loop()` instead of the static gray background.
-- **Model refinements:** Tune growth heuristics, transmitter dynamics, and add simple learning signals.
-- **Tests:** Add unit tests for coordinate math, growth boundaries, and transmitter decay.
+- Completed:
+  - Make a fat jar (shaded `-all.jar`).
+  - Wire rendering (window draws live brain nodes and transmitters).
+  - Tests (coordinate math, bounds growth, transmitter decay).
+  - Auto OS natives selection; logging migrated to SLF4J + Logback.
+
+- Newly implemented:
+  - Initial model refinements: bounded and smoother dendrite/synapse “wander” heuristics reacting to nearby activity.
+
+- Still open:
+  - Deeper model refinements (learning signals, better transmitter dynamics).
+  - Richer rendering (connectors, activity indicators).
 
 **TODO**
 

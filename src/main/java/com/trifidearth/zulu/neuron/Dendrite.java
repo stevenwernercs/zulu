@@ -18,6 +18,10 @@ import com.trifidearth.zulu.message.transmitter.Transmitters;
  */
 public class Dendrite extends CommunicationNode<Transmitters, ElectricPotential> implements Grows{
     
+    private static final double WANDER_MIN = 0.0D;
+    private static final double WANDER_MAX = 5.0D;
+    private static final double WANDER_INC = 0.05D;
+    private static final double WANDER_DEC_PER_SIGNAL = 0.2D;
     private double wander = 2D;
     
     public Dendrite(Coordinate coordinate) {
@@ -32,10 +36,15 @@ public class Dendrite extends CommunicationNode<Transmitters, ElectricPotential>
     public ElectricPotential propagate(Transmitters transmitters) {
         int receivedCount = transmitters.countNonZeroPotentials();
         if(receivedCount > 0){
-            wander = Math.min(wander-(receivedCount*100), 0);
+            // Reduce wander proportional to activity, bounded
+            wander -= Math.min(receivedCount, 5) * WANDER_DEC_PER_SIGNAL;
         } else {
-            wander += 1D;
+            // Slowly increase wander in absence of input
+            wander += WANDER_INC;
         }
+        // clamp
+        if (wander < WANDER_MIN) wander = WANDER_MIN;
+        if (wander > WANDER_MAX) wander = WANDER_MAX;
         
         ElectricPotential ep = new ElectricPotential(0);
         double sum = 0D;

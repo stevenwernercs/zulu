@@ -17,6 +17,11 @@ import com.trifidearth.zulu.message.transmitter.Transmitters;
  */
 public class Synapse extends CommunicationNode<ActionPotential, Transmitters> implements Grows {
 
+    private static final double WANDER_MIN = 0.0D;
+    private static final double WANDER_MAX = 10.0D;
+    private static final double WANDER_INC_NEAR_DEAD = 0.1D;
+    private static final double WANDER_DEC_NO_ACTIVITY = 0.05D;
+    private static final double WANDER_DEC_ACTIVE = 0.2D;
     private double wander = 5D;
     private Neuron neuron;
     
@@ -50,11 +55,14 @@ public class Synapse extends CommunicationNode<ActionPotential, Transmitters> im
         int deadNearby = nearby.countZeroPotentials();
         int aliveNearby = nearby.countNonZeroPotentials();
         if (deadNearby > 0) {
-            wander+=10D;
-        } else if(aliveNearby==0) {
-            wander-=1D;
+            wander += WANDER_INC_NEAR_DEAD;
+        } else if (aliveNearby == 0) {
+            wander -= WANDER_DEC_NO_ACTIVITY;
         } else {
-            wander-=100D;
+            // Favor stabilizing where there is activity
+            wander -= Math.min(aliveNearby, 5) * WANDER_DEC_ACTIVE;
         }
+        if (wander < WANDER_MIN) wander = WANDER_MIN;
+        if (wander > WANDER_MAX) wander = WANDER_MAX;
     }
 }
