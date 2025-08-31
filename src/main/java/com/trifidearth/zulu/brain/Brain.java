@@ -103,7 +103,7 @@ public class Brain {
         return transmitters;
     }
 
-    public void depositTranmitters(Coordinate coordinate, Transmitters transmitters) {
+    public void depositTransmitters(Coordinate coordinate, Transmitters transmitters) {
         Transmitters value;
         if((value = cerebralFluid.get(coordinate)) != null){
             transmitters.getTransmitters().addAll(value.getTransmitters());

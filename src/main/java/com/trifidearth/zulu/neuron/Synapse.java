@@ -8,14 +8,14 @@ package com.trifidearth.zulu.neuron;
 import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
-import com.trifidearth.zulu.message.potiential.ActionPotiential;
+import com.trifidearth.zulu.message.potential.ActionPotential;
 import com.trifidearth.zulu.message.transmitter.Transmitters;
 
 /**
  *
  * @author iSteve
  */
-public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> implements Grows {
+public class Synapse extends CommunicationNode<ActionPotential, Transmitters> implements Grows {
 
     private double wander = 5D;
     private Neuron neuron;
@@ -30,7 +30,7 @@ public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> i
     }
 
     @Override
-    public Transmitters propagate(ActionPotiential input) {
+    public Transmitters propagate(ActionPotential input) {
         if(input!=null){
             return Transmitters.getRandomTransmitters();
         }
@@ -48,7 +48,7 @@ public class Synapse extends CommunicationNode<ActionPotiential, Transmitters> i
     private void checkSurroundings(){
         Transmitters nearby = neuron.brain.pollNearByTransmitters(this.getGrowing());
         int deadNearby = nearby.countZeroPotentials();
-        int aliveNearby = nearby.countZeroPotentials();
+        int aliveNearby = nearby.countNonZeroPotentials();
         if (deadNearby > 0) {
             wander+=10D;
         } else if(aliveNearby==0) {

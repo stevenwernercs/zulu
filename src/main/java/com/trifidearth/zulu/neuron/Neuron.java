@@ -9,8 +9,8 @@ import com.trifidearth.zulu.coordinate.CoordinatePair;
 import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.brain.Brain;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
-import com.trifidearth.zulu.message.potiential.ActionPotiential;
-import com.trifidearth.zulu.message.potiential.ElectricPotiential;
+import com.trifidearth.zulu.message.potential.ActionPotential;
+import com.trifidearth.zulu.message.potential.ElectricPotential;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,18 +47,18 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
 
     @Override
     public void update() {
-        ElectricPotiential dendritalSum = new ElectricPotiential(0);
+        ElectricPotential dendritalSum = new ElectricPotential(0);
         for(Dendrite each : dendrites) {
             dendritalSum.absorb(each.propagate(brain.retrieveNearByTransmitters(each.getGrowing())));
         }
-        ActionPotiential axonIn = soma.propagate(dendritalSum);
+        ActionPotential axonIn = soma.propagate(dendritalSum);
         if(axonIn != null){
             if(NeuronType.MOTOR.equals(type)) {
                 brain.out.println(String.valueOf(Character.toChars(name)));
             } else {
-                ActionPotiential axonOut = axon.propagate(axonIn);
+                ActionPotential axonOut = axon.propagate(axonIn);
                 for (Synapse each : synapses) {
-                    brain.depositTranmitters(each.getGrowing(), each.propagate(axonOut));
+                    brain.depositTransmitters(each.getGrowing(), each.propagate(axonOut));
                 }
             }
         }
@@ -67,7 +67,7 @@ public class Neuron extends Node implements Listening, Grows, Runnable{
     private void init(Coordinate coordinate, CoordinateBounds bounds){
         CoordinatePair point = new CoordinatePair(coordinate);
         dendrites = new ConcurrentLinkedQueue<>();
-        soma = new Soma(point, new ElectricPotiential(0));
+        soma = new Soma(point, new ElectricPotential(0));
         axon = new Axon(point);
         axon.grow(brain.getBounds());
         synapses = new ConcurrentLinkedQueue<>();

@@ -8,7 +8,7 @@ package com.trifidearth.zulu.neuron;
 import com.trifidearth.zulu.coordinate.Coordinate;
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
-import com.trifidearth.zulu.message.potiential.ElectricPotiential;
+import com.trifidearth.zulu.message.potential.ElectricPotential;
 import com.trifidearth.zulu.message.transmitter.Transmitter;
 import com.trifidearth.zulu.message.transmitter.Transmitters;
 
@@ -16,7 +16,7 @@ import com.trifidearth.zulu.message.transmitter.Transmitters;
  *
  * @author iSteve
  */
-public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential> implements Grows{
+public class Dendrite extends CommunicationNode<Transmitters, ElectricPotential> implements Grows{
     
     private double wander = 2D;
     
@@ -29,7 +29,7 @@ public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential
     }
 
     @Override
-    public ElectricPotiential propagate(Transmitters transmitters) {
+    public ElectricPotential propagate(Transmitters transmitters) {
         int receivedCount = transmitters.countNonZeroPotentials();
         if(receivedCount > 0){
             wander = Math.min(wander-(receivedCount*100), 0);
@@ -37,13 +37,13 @@ public class Dendrite extends CommunicationNode<Transmitters, ElectricPotiential
             wander += 1D;
         }
         
-        ElectricPotiential ep = new ElectricPotiential(0);
+        ElectricPotential ep = new ElectricPotential(0);
         double sum = 0D;
         for(Transmitter each : transmitters.getTransmitters()){
-            //ep.absorb(each.getElectricPotiential());
-            sum += each.getElectricPotiential().getPotientialVoltage();
+            //ep.absorb(each.getElectricPotential());
+            sum += each.getElectricPotential().getPotentialVoltage();
         }
-        ep.setPotientialVoltage(sum);
+        ep.setPotentialVoltage(sum);
         return ep;
     }
 

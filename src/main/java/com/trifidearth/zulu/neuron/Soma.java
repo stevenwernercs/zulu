@@ -6,37 +6,37 @@
 package com.trifidearth.zulu.neuron;
 
 import com.trifidearth.zulu.coordinate.CoordinatePair;
-import com.trifidearth.zulu.message.potiential.ElectricPotiential;
-import com.trifidearth.zulu.message.potiential.ActionPotiential;
+import com.trifidearth.zulu.message.potential.ElectricPotential;
+import com.trifidearth.zulu.message.potential.ActionPotential;
 
 /**
  *
  * @author iSteve
  */
-public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential> {
+public class Soma extends CommunicationNode<ElectricPotential, ActionPotential> {
 
-    private static final double RESTING_POTIENTIAL = -70D;
+    private static final double RESTING_POTENTIAL = -70D;
     private static final double THRESHOLD = -55D;
     private static final double DE_POLARIZATION = 40D;
     private static final double HYPERPOLARIZATION = -75D;
-    ElectricPotiential potiential = new ElectricPotiential(RESTING_POTIENTIAL);
+    ElectricPotential potential = new ElectricPotential(RESTING_POTENTIAL);
     
     public Soma(CoordinatePair coordinatePair) {
         super(coordinatePair);
     }
     
-    public Soma(CoordinatePair coordinatePair, ElectricPotiential potiential) {
+    public Soma(CoordinatePair coordinatePair, ElectricPotential potential) {
         super(coordinatePair);
-        this.potiential = potiential;
+        this.potential = potential;
     }
     
     //buffer to collect and propagate action potentials
-    ActionPotiential summation() {
-        ActionPotiential output = null;
-        if(potiential.getPotientialVoltage() > THRESHOLD) {
-            output = new ActionPotiential();
+    ActionPotential summation() {
+        ActionPotential output = null;
+        if(potential.getPotentialVoltage() > THRESHOLD) {
+            output = new ActionPotential();
         }
-        potiential.setPotientialVoltage(RESTING_POTIENTIAL);
+        potential.setPotentialVoltage(RESTING_POTENTIAL);
         return output;
     }
     
@@ -47,8 +47,8 @@ public class Soma extends CommunicationNode<ElectricPotiential, ActionPotiential
     }
 
     @Override
-    public ActionPotiential propagate(ElectricPotiential input) {
-        this.potiential.absorb(input);
+    public ActionPotential propagate(ElectricPotential input) {
+        this.potential.absorb(input);
         return summation();
     }
 }

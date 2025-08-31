@@ -7,14 +7,14 @@ package com.trifidearth.zulu.neuron;
 
 import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import com.trifidearth.zulu.coordinate.CoordinatePair;
-import com.trifidearth.zulu.message.potiential.ActionPotiential;
+import com.trifidearth.zulu.message.potential.ActionPotential;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author iSteve
  */
-public class Axon extends CommunicationNode<ActionPotiential, ActionPotiential> implements Grows{
+public class Axon extends CommunicationNode<ActionPotential, ActionPotential> implements Grows{
     
     private static final Logger log = Logger.getLogger(Axon.class);
     
@@ -30,7 +30,7 @@ public class Axon extends CommunicationNode<ActionPotiential, ActionPotiential> 
      * @param ap
      */
     @Override
-    public ActionPotiential propagate (ActionPotiential ap) {
+    public ActionPotential propagate (ActionPotential ap) {
         delay();
         return ap;
     }

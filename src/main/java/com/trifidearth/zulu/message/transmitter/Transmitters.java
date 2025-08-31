@@ -75,7 +75,7 @@ public class Transmitters extends Message {
     public int countNonZeroPotentials() {
         int ret = 0;
         for(Transmitter each : transmitterList){
-            if(each.potiential.getPotientialVoltage()!= 0D){
+            if(each.potential.getPotentialVoltage()!= 0D){
                 ret++;
             }
         }
@@ -85,7 +85,7 @@ public class Transmitters extends Message {
     public int countZeroPotentials() {
         int ret = 0;
         for(Transmitter each : transmitterList){
-            if(each.potiential.getPotientialVoltage()== 0D){
+            if(each.potential.getPotentialVoltage()== 0D){
                 ret++;
             }
         }
