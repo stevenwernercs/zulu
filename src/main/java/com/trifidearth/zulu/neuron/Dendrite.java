@@ -58,8 +58,12 @@ public class Dendrite extends CommunicationNode<Transmitters, ElectricPotential>
 
     @Override
     public void grow(CoordinateBounds bounds) {
-        if(wander > 0) {
-            getCoordinatePair().growRandom(Math.min(wander, .15D), bounds);
+        if (wander > 0) {
+            double moveProb = Math.min(1.0, wander / 5.0); // 0..1
+            if (Math.random() < moveProb) {
+                double step = 0.10D; // keep dendrite steps modest
+                getCoordinatePair().growRandom(step, bounds);
+            }
         }
     }
 }

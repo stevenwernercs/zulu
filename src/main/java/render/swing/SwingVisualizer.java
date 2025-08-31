@@ -233,7 +233,7 @@ public class SwingVisualizer implements Runnable {
                 }
             }
 
-            // Draw connectors from soma to endpoints
+            // Draw connectors from soma to dendrites, soma to axon, and axon to synapses
             g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1f, new float[]{6f,6f}, 0f));
             for (Map.Entry<String, Ends> en : endsById.entrySet()) {
                 Ends ends = en.getValue();
@@ -248,10 +248,12 @@ public class SwingVisualizer implements Runnable {
                 for (Point dp : ends.dend) {
                     g2.drawLine(ends.soma.x, ends.soma.y, dp.x, dp.y);
                 }
-                // Soma to synapses
-                g2.setColor(new Color(240,80,240,160));
-                for (Point sp : ends.syn) {
-                    g2.drawLine(ends.soma.x, ends.soma.y, sp.x, sp.y);
+                // Axon to synapses
+                if (ends.axon != null) {
+                    g2.setColor(new Color(240,80,240,160));
+                    for (Point sp : ends.syn) {
+                        g2.drawLine(ends.axon.x, ends.axon.y, sp.x, sp.y);
+                    }
                 }
             }
         }

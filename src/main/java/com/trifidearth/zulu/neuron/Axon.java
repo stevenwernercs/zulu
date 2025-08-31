@@ -48,7 +48,8 @@ public class Axon extends CommunicationNode<ActionPotential, ActionPotential> im
     public void grow(CoordinateBounds bounds) {
         //TODO function of bounds
         if(getFixed().equals(getGrowing())) {
-            getCoordinatePair().growRandom(10, bounds);
+            // Extend axon farther than dendrites/synapses to create plausible reach
+            getCoordinatePair().growRandom(30, bounds);
             distance = getCoordinatePair().distance();
         } else {
             throw new RuntimeException("can only grow an axon once");

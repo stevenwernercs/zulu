@@ -45,8 +45,12 @@ public class Synapse extends CommunicationNode<ActionPotential, Transmitters> im
 
     @Override
     public void grow(CoordinateBounds bounds) {
-        if(wander > 0) {
-            getCoordinatePair().growRandom(Math.min(wander,.1D), bounds);
+        if (wander > 0) {
+            double moveProb = Math.min(1.0, wander / 10.0); // synapses wander less often
+            if (Math.random() < moveProb) {
+                double step = 0.08D; // smaller than dendrites
+                getCoordinatePair().growRandom(step, bounds);
+            }
         }
     }
     
