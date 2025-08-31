@@ -25,9 +25,9 @@ public abstract class Transmitter extends Message {
     protected long dieTime;
     protected long decayTime;
 
-    public Transmitter(String name, double potiential, float lifespanSeconds, float decayspanSeconds) {
+    public Transmitter(String name, double potentialVoltage, float lifespanSeconds, float decayspanSeconds) {
         this.name = name;
-        this.potential = new ElectricPotential(potiential);
+        this.potential = new ElectricPotential(potentialVoltage);
         this.lifespanSeconds = lifespanSeconds;
         this.decayspanSeconds = decayspanSeconds;
         this.dieTime = System.currentTimeMillis()+(long)(lifespanSeconds*1000L);
