@@ -73,6 +73,10 @@ Run scripts (auto-build if jar missing):
 - macOS: `scripts/run-mac.sh`
 - Windows: `scripts/run-windows.bat`
 
+Notes on natives loading
+- The run scripts extract LWJGL native libraries per-OS into `target/natives/<os>` and set `-Dorg.lwjgl.librarypath` accordingly. This avoids “Failed to load a library: lwjgl.dll” on Windows.
+- If you move just the fat jar elsewhere, also copy the `target/natives/<os>` directory and add `-Dorg.lwjgl.librarypath` to your `java -jar` command.
+
 Notes:
 - A runnable fat jar (`-all.jar`) is produced via the Maven Shade plugin.
 

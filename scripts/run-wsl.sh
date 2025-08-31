@@ -22,5 +22,10 @@ if [[ -z "${JAR}" ]]; then
 fi
 
 echo "Running: ${JAR}"
-exec java -jar "${JAR}"
+NATIVES_DIR=target/natives/linux
+if [ ! -d "$NATIVES_DIR" ]; then
+  echo "Extracting LWJGL natives..."
+  mvn -DskipTests package >/dev/null
+fi
 
+exec java -Dorg.lwjgl.librarypath="$NATIVES_DIR" -jar "${JAR}"
