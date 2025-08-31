@@ -64,6 +64,12 @@ Artifacts:
   - `java -jar target/zulu-1.0-SNAPSHOT-all.jar`
   - Linux/WSL2: ensure an OpenGL-capable display (X11/Wayland) is available.
 
+Run scripts (auto-build if jar missing):
+- Linux: `scripts/run-linux.sh`
+- WSL: `scripts/run-wsl.sh` (sets DISPLAY if unset; requires X/Wayland on Windows host)
+- macOS: `scripts/run-mac.sh`
+- Windows: `scripts/run-windows.bat`
+
 Notes:
 - A runnable fat jar (`-all.jar`) is produced via the Maven Shade plugin.
 
