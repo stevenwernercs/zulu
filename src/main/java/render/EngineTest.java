@@ -16,9 +16,11 @@ public class EngineTest {
     
     
     public static void main(String [] args) {
-        System.out.println("EngineTest: starting Swing 2D visualizer...");
+        System.out.println("EngineTest: java.awt.headless=" + System.getProperty("java.awt.headless", "false"));
+        System.out.println("EngineTest: starting Swing 2D visualizer (scheduling on EDT)...");
         try {
-            new SwingVisualizer().run();
+            javax.swing.SwingUtilities.invokeLater(new SwingVisualizer());
+            System.out.println("EngineTest: Swing visualizer scheduled on EDT.");
             return;
         } catch (Throwable t) {
             t.printStackTrace(System.out);

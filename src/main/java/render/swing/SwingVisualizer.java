@@ -21,10 +21,18 @@ public class SwingVisualizer implements Runnable {
     @Override
     public void run() {
         System.out.println("SwingVisualizer: initializing UI and Brain...");
+        try {
+            System.out.println("SwingVisualizer: Toolkit=" + java.awt.Toolkit.getDefaultToolkit().getClass().getName());
+        } catch (Throwable t) {
+            t.printStackTrace(System.out);
+        }
+        System.out.println("SwingVisualizer: creating frame...");
         frame = new JFrame("Zulu Swing 2D Visualizer");
+        System.out.println("SwingVisualizer: frame created.");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         bounds = new CoordinateBounds(new Coordinate(0,0,0), 60);
         try {
+            System.out.println("SwingVisualizer: constructing brain...");
             brain = new Brain(bounds, 6, 24, 6);
             brain.start();
             System.out.println("SwingVisualizer: brain started with bounds="+bounds+".");
@@ -35,6 +43,7 @@ public class SwingVisualizer implements Runnable {
         frame.setContentPane(view);
         frame.setSize(1024, 768);
         frame.setLocationByPlatform(true);
+        System.out.println("SwingVisualizer: showing UI...");
         frame.setVisible(true);
 
         // repaint at ~30 FPS
