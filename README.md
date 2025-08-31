@@ -17,7 +17,7 @@
 - Builds a small network (sensory, inter-neuron, motor), starts one thread per neuron.
 - Each neuron loop: sample nearby transmitters at dendrites → sum potential → threshold at soma → propagate via axon → emit transmitters at synapses.
 - Brain maintains a coordinate-indexed fluid of transmitters with decay; prints a textual “plot” and motor neuron output to the console.
-- LWJGL window renders the live brain state as colored points (soma, dendrites, axon tips, synapses, transmitters) and updates continuously.
+- LWJGL 3D visualizer renders the live brain as colored points in 3D (soma, dendrites, axon tips, synapses, transmitters) and updates continuously.
 
 **Project Layout**
 
@@ -80,7 +80,13 @@ Notes:
 - **Update loop:** Each `Neuron` runs as a daemon thread, repeatedly aggregating dendritic inputs, potentially firing, and depositing transmitters into a shared fluid map keyed by coordinates.
 - **Growth:** `Dendrite`/`Synapse` “wander” and grow within `CoordinateBounds`, using random deltas limited by a wander factor.
 - **Messaging:** `Transmitters` carry a potential that decays to zero after a lifespan; dead messages are eventually removed.
-- **Rendering:** The LWJGL window maps coordinates into 2D and draws colored points for node/transmitter types; updates every frame.
+- **Rendering:** 3D view with perspective projection and a simple camera. Draws colored points for node/transmitter types; updates every frame.
+
+**Controls**
+
+- Mouse: Right-drag to rotate the camera (orbit yaw/pitch).
+- Scroll: Zoom in/out.
+- Keyboard: `ESC` to quit; `R` to reset camera.
 
 **Known Issues / Rough Edges**
 
