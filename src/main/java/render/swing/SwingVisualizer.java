@@ -69,21 +69,29 @@ public class SwingVisualizer implements Runnable {
         System.out.println("SwingVisualizer: UI visible. Use mouse wheel to zoom, drag to pan, 'R' to reset.");
     }
 
-    private void tick() {
-        if (paused) return;
+    private void tick(boolean force) {
+        if (paused && !force) return;
         try {
             brain.grow();
             Map<Coordinate, List<String>> map = brain.getNodeLocationMap();
-            java.util.List<Coordinate> keys = new java.util.ArrayList<>(map.keySet());
-            if (!keys.isEmpty()) {
-                int injections = Math.min(4, Math.max(1, keys.size()/20));
+            // Prefer stimulus at dendrite endpoints for interpretability
+            java.util.List<Coordinate> dendrites = new java.util.ArrayList<>();
+            for (Map.Entry<Coordinate, List<String>> en : map.entrySet()) {
+                for (String label : en.getValue()) {
+                    if (label.endsWith("_D")) { dendrites.add(en.getKey()); break; }
+                }
+            }
+            java.util.List<Coordinate> targets = dendrites.isEmpty() ? new java.util.ArrayList<>(map.keySet()) : dendrites;
+            if (!targets.isEmpty()) {
+                int injections = Math.min(4, Math.max(1, targets.size()/25));
                 for (int i = 0; i < injections; i++) {
-                    Coordinate c = keys.get((int)(Math.random() * keys.size()));
+                    Coordinate c = targets.get((int)(Math.random() * targets.size()));
                     brain.depositTransmitters(c, Transmitters.getRandomTransmitters());
                 }
             }
             iterations++;
             if (iterLabel != null) iterLabel.setText("Iter: " + iterations);
+            frame.setTitle("Zulu Swing 2D Visualizer — Iter " + iterations);
         } catch (Throwable t) {
             t.printStackTrace(System.out);
         }
@@ -97,13 +105,16 @@ public class SwingVisualizer implements Runnable {
         pauseButton.addActionListener(e -> {
             paused = !paused;
             pauseButton.setText(paused ? "Start" : "Pause");
+            stepButton.setEnabled(paused);
         });
         stepButton.addActionListener(e -> {
-            boolean wasPaused = paused;
-            paused = true;
-            tick();
-            paused = wasPaused;
+            if (paused) {
+                tick(true);
+            } else {
+                try { java.awt.Toolkit.getDefaultToolkit().beep(); } catch (Throwable ignore) {}
+            }
         });
+        stepButton.setEnabled(paused);
         panel.add(pauseButton);
         panel.add(stepButton);
         panel.add(iterLabel);
