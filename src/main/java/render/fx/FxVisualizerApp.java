@@ -6,6 +6,7 @@ import com.trifidearth.zulu.coordinate.CoordinateBounds;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.application.ConditionalFeature;
 import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.Label;
@@ -40,6 +41,14 @@ public class FxVisualizerApp extends Application {
 
     @Override
     public void start(Stage stage) {
+        if (!Platform.isSupported(ConditionalFeature.SCENE3D)) {
+            System.out.println("JavaFX: SCENE3D not supported on this system. Use the Swing visualizer (default).");
+            Stage info = new Stage();
+            info.setTitle("JavaFX 3D Not Supported");
+            info.setScene(new Scene(new BorderPane(new Label("JavaFX 3D not supported. Use Swing renderer.")), 420, 120));
+            info.show();
+            return;
+        }
         // Root UI
         BorderPane root = new BorderPane();
         SubScene sub = new SubScene(buildWorld(), 1024, 768, true, SceneAntialiasing.BALANCED);
