@@ -17,7 +17,7 @@
 - Builds a small network (sensory, inter-neuron, motor), starts one thread per neuron.
 - Each neuron loop: sample nearby transmitters at dendrites → sum potential → threshold at soma → propagate via axon → emit transmitters at synapses.
 - Brain maintains a coordinate-indexed fluid of transmitters with decay; prints a textual “plot” and motor neuron output to the console.
-- JavaFX 3D visualizer renders the live brain as colored points in 3D (soma, dendrites, axon tips, synapses, transmitters) and updates continuously. The prior LWJGL visualizer remains in the codebase for future fixes.
+- Default Swing 2D visualizer renders the brain as colored points (most compatible). JavaFX 3D visualizer is available (hardware support required), and the prior LWJGL visualizer remains in the codebase for future fixes.
 
 **Project Layout**
 
@@ -61,8 +61,8 @@ Artifacts:
   - `mvn -q org.codehaus.mojo:exec-maven-plugin:3.1.0:java -Dexec.mainClass=com.trifidearth.zulu.brain.Brain`
 
 - Fat jar: `java -jar target/zulu-1.0-SNAPSHOT-all.jar`
-  - Default renderer: JavaFX 3D (no additional native flags needed).
-  - The LWJGL renderer remains available but is not the default.
+  - Default renderer: Swing 2D (no GPU requirements).
+  - JavaFX 3D and LWJGL renderers are included but not default.
 
 Run scripts (auto-build if jar missing):
 - Linux: `scripts/run-linux.sh`
@@ -70,9 +70,10 @@ Run scripts (auto-build if jar missing):
 - macOS: `scripts/run-mac.sh`
 - Windows: `scripts/run-windows.bat`
 
-Notes on natives loading
-- JavaFX is bundled via platform-specific artifacts and doesn’t require manual native flags in typical setups.
-- If you switch back to the LWJGL renderer, the run scripts set `-Dorg.lwjgl.librarypath` and unpack LWJGL natives per-OS.
+Notes on natives/loading
+- Swing 2D uses pure Java2D — no graphics driver/natives required.
+- JavaFX is bundled via platform-specific artifacts; some environments (WSL/headless) may not support 3D pipelines.
+- LWJGL path remains for future; run scripts no longer attempt native extraction by default.
 
 Notes:
 - A runnable fat jar (`-all.jar`) is produced via the Maven Shade plugin.
@@ -86,9 +87,8 @@ Notes:
 
 **Controls**
 
-- Mouse: Right-drag to rotate the camera (orbit yaw/pitch).
-- Scroll: Zoom in/out.
-- Keyboard: `ESC` to quit; `R` to reset camera.
+- Swing 2D: mouse wheel zoom; drag to pan; `R` reset.
+- JavaFX 3D: Right-drag rotate; Scroll zoom; `R` reset; `ESC` quit.
 
 Log window
 - A separate window titled “Brain Console” streams logs and Brain.print output so you can observe activity without an IDE console.

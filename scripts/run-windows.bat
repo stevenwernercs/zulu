@@ -16,14 +16,8 @@ for %%f in (target\*-all.jar) do (
 )
 
 :found
-set NATIVES_DIR=target\natives\windows
-if not exist %NATIVES_DIR% (
-  echo Extracting LWJGL natives...
-  mvn -DskipTests package >NUL 2>&1 || echo Build failed. Ensure Maven is installed.
-)
-
 echo Running: %JAR%
-java -Dorg.lwjgl.librarypath=%NATIVES_DIR% -jar "%JAR%"
+java -jar "%JAR%"
 
 popd
 endlocal

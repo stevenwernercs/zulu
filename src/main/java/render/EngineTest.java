@@ -6,6 +6,7 @@
 package render;
 
 import render.fx.FxVisualizerApp;
+import render.swing.SwingVisualizer;
 
 /**
  *
@@ -15,10 +16,22 @@ public class EngineTest {
     
     
     public static void main(String [] args) {
-        // Default: JavaFX renderer for broader OS compatibility
-        FxVisualizerApp.main(args);
-        // LWJGL visualizer remains available for future fixes:
-        // new Visualizer3D().run();
+        // Default: Swing 2D renderer (most compatible)
+        try {
+            javax.swing.SwingUtilities.invokeLater(new SwingVisualizer());
+            return;
+        } catch (Throwable t) {
+            // fallback to JavaFX if Swing fails (unlikely)
+        }
+        // JavaFX renderer
+        try {
+            FxVisualizerApp.main(args);
+            return;
+        } catch (Throwable t) {
+            // ignore, try LWJGL last
+        }
+        // LWJGL visualizer remains available for future fixes
+        new Visualizer3D().run();
     }
     
     
