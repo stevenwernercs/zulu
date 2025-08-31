@@ -112,9 +112,9 @@ public class Visualizer3D {
         glfwSwapInterval(1);
         glfwShowWindow(window);
 
-        bounds = new CoordinateBounds(new Coordinate(0, 0, 0), 50);
+        bounds = new CoordinateBounds(new Coordinate(0, 0, 0), 60);
         try {
-            brain = new Brain(bounds, 2, 8, 2);
+            brain = new Brain(bounds, 6, 24, 6);
             brain.start();
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize Brain", e);

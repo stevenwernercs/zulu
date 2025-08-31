@@ -238,6 +238,52 @@
 	    <version>${lwjgl.version}</version>
 	    <classifier>${lwjgl.natives}</classifier>
 	</dependency>
+        <!-- Bundle core natives for all OS (Windows/macOS) in addition to the host OS profile.
+             This allows the shaded jar to run cross-platform without rebuilding. -->
+        <!-- Windows -->
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>natives-windows</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-glfw</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>natives-windows</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-opengl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>natives-windows</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- macOS -->
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>natives-macos</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-glfw</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>natives-macos</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-opengl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>natives-macos</classifier>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
